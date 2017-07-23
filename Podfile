@@ -7,6 +7,8 @@ target 'AnnotationsExample' do
   
   pod 'MapGrid', :git => 'https://github.com/mkko/MapGrid.git', :branch => 'master'
   pod 'RxMKMapView', :path => '../RxMKMapView'
+  pod 'RxSwift',    '~> 3.0'
+  pod 'RxCocoa',    '~> 3.0'
 
   # Pods for AnnotationsExample
 
