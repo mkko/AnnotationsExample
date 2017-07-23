@@ -6,6 +6,7 @@ target 'AnnotationsExample' do
   use_frameworks!
   
   pod 'MapGrid', :git => 'https://github.com/mkko/MapGrid.git', :branch => 'master'
+  pod 'RxMKMapView', :path => '../RxMKMapView'
 
   # Pods for AnnotationsExample
 

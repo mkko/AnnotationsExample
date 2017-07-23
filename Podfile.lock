@@ -1,13 +1,22 @@
 PODS:
   - MapGrid (1.0.0)
+  - RxCocoa (3.5.0):
+    - RxSwift (~> 3.4)
+  - RxMKMapView (3.0.0):
+    - RxCocoa (~> 3.0)
+    - RxSwift (~> 3.0)
+  - RxSwift (3.5.0)
 
 DEPENDENCIES:
   - MapGrid (from `https://github.com/mkko/MapGrid.git`, branch `master`)
+  - RxMKMapView (from `../RxMKMapView`)
 
 EXTERNAL SOURCES:
   MapGrid:
     :branch: master
     :git: https://github.com/mkko/MapGrid.git
+  RxMKMapView:
+    :path: ../RxMKMapView
 
 CHECKOUT OPTIONS:
   MapGrid:
@@ -16,7 +25,10 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   MapGrid: 50a9c6593b56d05f77b3b5424fccab3ac86217a1
+  RxCocoa: a0a09f45d0e5b48ecb6a4a7b4b4c89c88d3f633f
+  RxMKMapView: f8cc11dd545b30e681cb9461a5be8b1f2c26c8f3
+  RxSwift: 18ee9d78b45edb3b0b7e79916b47a116e6dbc842
 
-PODFILE CHECKSUM: 441b81ce5254386e1565a5765fe4e6d6a33a6be9
+PODFILE CHECKSUM: cf1d858087579b9e899e7559f9377de7bc655a1f
 
 COCOAPODS: 1.2.1
