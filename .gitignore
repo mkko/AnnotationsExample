@@ -1,12 +1,12 @@
 
-# Created by https://www.gitignore.io/api/cocoapods
+# Created by https://www.gitignore.io/api/carthage
 
-### CocoaPods ###
-## CocoaPods GitIgnore Template
+### Carthage ###
+# Carthage
+#
+# Add this line if you want to avoid checking in source code from Carthage dependencies.
+# Carthage/Checkouts
 
-# CocoaPods - Only use to conserve bandwidth / Save time on Pushing
-#           - Also handy if you have a lage number of dependant pods
-#           - AS PER https://guides.cocoapods.org/using/using-cocoapods.html NEVER IGONRE THE LOCK FILE
-Pods/
+Carthage/Build
 
-# End of https://www.gitignore.io/api/cocoapods
+# End of https://www.gitignore.io/api/carthage
