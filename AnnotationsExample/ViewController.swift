@@ -9,6 +9,8 @@
 import UIKit
 import MapKit
 import MapGrid
+import RxMKMapView
+import RxSwift
 
 class City: NSObject, MKAnnotation {
     
@@ -53,6 +55,14 @@ class ViewController: UIViewController {
             tile.append(city)
             self.cityMap[mapIndex] = tile
         }
+        
+        annotationSubscription = mapView.rx.regionDidChangeAnimated
+            .map { _ -> [MKAnnotation] in
+                let a = MKPointAnnotation()
+                a.coordinate = self.mapView.centerCoordinate
+                print("-> \(a)")
+                return [a]
+            }.bind(to: mapView.rx.annotations2)
     }
 }
 
