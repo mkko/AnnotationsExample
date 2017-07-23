@@ -46,6 +46,8 @@ class ViewController: UIViewController {
     
     var cityMap = MapGrid<[City]>(tileSize: 5000)
     
+    private var annotationSubscription: Disposable! = nil
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -62,7 +64,7 @@ class ViewController: UIViewController {
                 a.coordinate = self.mapView.centerCoordinate
                 print("-> \(a)")
                 return [a]
-            }.bind(to: mapView.rx.annotations2)
+            }.bind(to: mapView.rx.annotations)
     }
 }
 
