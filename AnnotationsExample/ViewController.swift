@@ -59,47 +59,16 @@ class ViewController: UIViewController {
         }
         
         annotationSubscription = mapView.rx.regionDidChangeAnimated
-            .map { _ -> [MKAnnotation] in
-                let a = MKPointAnnotation()
-                a.coordinate = self.mapView.centerCoordinate
-                print("-> \(a)")
-                return [a]
+            .map { _ in self.getVisibleRegion(mapView: self.mapView ) }
+            .map { region -> [MKAnnotation] in
+                // Load annotations in given region.
+                return self.cityMap.tiles(atRegion: region).flatMap { $0 }
             }.bind(to: mapView.rx.annotations)
     }
 }
 
 extension ViewController: MKMapViewDelegate {
-    
-    private func createTile(mapIndex: MapIndex, mapGrid: MapGrid<Tile>) -> Tile {
-        let region = mapGrid.region(at: mapIndex)
-        let cities = self.cityMap.tiles(atRegion: region).flatMap { $0 }
-        return Tile(cities: cities, overlay: MKPolygon(region: region))
-    }
-    
-    func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
         
-        let visibleRegion = getVisibleRegion(mapView: mapView)
-        
-        mapView.remove(regionOverlay)
-        self.regionOverlay = MKPolygon(region: visibleRegion)
-        mapView.add(regionOverlay)
-        
-        // Crop and fill the grid.
-        
-        let removedTiles = grid.crop(toRegion: visibleRegion)
-        let newTiles = grid.fill(toRegion: visibleRegion, newTile: self.createTile)
-        
-        print("update: +\(newTiles.count) -\(removedTiles.count)")
-        
-        // Update the map.
-        
-        mapView.addAnnotations(newTiles.flatMap { $0.item.cities })
-        mapView.removeAnnotations(removedTiles.flatMap { $0.item.cities })
-        
-        mapView.addOverlays(newTiles.map { $0.item.overlay })
-        mapView.removeOverlays(removedTiles.map { $0.item.overlay })
-    }
-    
     func getVisibleRegion(mapView: MKMapView) -> MKCoordinateRegion {
         return mapView.zoomLevel > 13
             ? MKCoordinateRegion()
