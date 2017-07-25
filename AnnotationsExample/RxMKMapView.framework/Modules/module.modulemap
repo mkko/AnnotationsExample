@@ -1,0 +1,10 @@
+framework module RxMKMapView {
+  umbrella header "RxMKMapView.h"
+
+  export *
+  module * { export * }
+}
+
+module RxMKMapView.Swift {
+    header "RxMKMapView-Swift.h"
+}

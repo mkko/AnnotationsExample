@@ -14,8 +14,14 @@
 		2B9269B11F24A6EA00240ABC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2B9269AF1F24A6EA00240ABC /* LaunchScreen.storyboard */; };
 		2B9269BC1F24A6EA00240ABC /* AnnotationsExampleUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9269BB1F24A6EA00240ABC /* AnnotationsExampleUITests.swift */; };
 		2B9269C71F24A8F200240ABC /* simplemaps-worldcities-basic.csv in Resources */ = {isa = PBXBuildFile; fileRef = 2B9269C61F24A8F200240ABC /* simplemaps-worldcities-basic.csv */; };
-		8B7900C0E04CCD4942C821E3 /* Pods_AnnotationsExampleUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F238A30C1A761E851402F97 /* Pods_AnnotationsExampleUITests.framework */; };
-		8D5BE8097A506B9FEEB06EE4 /* Pods_AnnotationsExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6583F9B07867C0AAF291A815 /* Pods_AnnotationsExample.framework */; };
+		2BEC030E1F2538D6007B9036 /* RxMKMapView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BEC02C11F24B996007B9036 /* RxMKMapView.framework */; };
+		2BEC030F1F2538D6007B9036 /* RxMKMapView.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2BEC02C11F24B996007B9036 /* RxMKMapView.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		2BEC03101F2538D6007B9036 /* MapGrid.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BEC02C21F24B996007B9036 /* MapGrid.framework */; };
+		2BEC03111F2538D6007B9036 /* MapGrid.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2BEC02C21F24B996007B9036 /* MapGrid.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		2BEC03121F2538D6007B9036 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BEC02C31F24B996007B9036 /* RxCocoa.framework */; };
+		2BEC03131F2538D6007B9036 /* RxCocoa.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2BEC02C31F24B996007B9036 /* RxCocoa.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		2BEC03141F2538D6007B9036 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BEC02C41F24B996007B9036 /* RxSwift.framework */; };
+		2BEC03151F2538D6007B9036 /* RxSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2BEC02C41F24B996007B9036 /* RxSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -27,6 +33,23 @@
 			remoteInfo = AnnotationsExample;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		2BEC03161F2538D6007B9036 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				2BEC03151F2538D6007B9036 /* RxSwift.framework in Embed Frameworks */,
+				2BEC03131F2538D6007B9036 /* RxCocoa.framework in Embed Frameworks */,
+				2BEC030F1F2538D6007B9036 /* RxMKMapView.framework in Embed Frameworks */,
+				2BEC03111F2538D6007B9036 /* MapGrid.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		2B9269A31F24A6EA00240ABC /* AnnotationsExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AnnotationsExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -40,12 +63,10 @@
 		2B9269BB1F24A6EA00240ABC /* AnnotationsExampleUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnotationsExampleUITests.swift; sourceTree = "<group>"; };
 		2B9269BD1F24A6EA00240ABC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2B9269C61F24A8F200240ABC /* simplemaps-worldcities-basic.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "simplemaps-worldcities-basic.csv"; sourceTree = "<group>"; };
-		3F238A30C1A761E851402F97 /* Pods_AnnotationsExampleUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AnnotationsExampleUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		6583F9B07867C0AAF291A815 /* Pods_AnnotationsExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AnnotationsExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		83A79696D484E9F3BD5960DD /* Pods-AnnotationsExampleUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AnnotationsExampleUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-AnnotationsExampleUITests/Pods-AnnotationsExampleUITests.debug.xcconfig"; sourceTree = "<group>"; };
-		BC759908F5F3E5138BAE9B01 /* Pods-AnnotationsExampleUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AnnotationsExampleUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-AnnotationsExampleUITests/Pods-AnnotationsExampleUITests.release.xcconfig"; sourceTree = "<group>"; };
-		DBCEAA019A6EFEAB07A80EAD /* Pods-AnnotationsExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AnnotationsExample.release.xcconfig"; path = "Pods/Target Support Files/Pods-AnnotationsExample/Pods-AnnotationsExample.release.xcconfig"; sourceTree = "<group>"; };
-		E641863FF601AB185CA14DDE /* Pods-AnnotationsExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AnnotationsExample.debug.xcconfig"; path = "Pods/Target Support Files/Pods-AnnotationsExample/Pods-AnnotationsExample.debug.xcconfig"; sourceTree = "<group>"; };
+		2BEC02C11F24B996007B9036 /* RxMKMapView.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RxMKMapView.framework; sourceTree = "<group>"; };
+		2BEC02C21F24B996007B9036 /* MapGrid.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = MapGrid.framework; sourceTree = "<group>"; };
+		2BEC02C31F24B996007B9036 /* RxCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RxCocoa.framework; sourceTree = "<group>"; };
+		2BEC02C41F24B996007B9036 /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RxSwift.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,7 +74,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8D5BE8097A506B9FEEB06EE4 /* Pods_AnnotationsExample.framework in Frameworks */,
+				2BEC03141F2538D6007B9036 /* RxSwift.framework in Frameworks */,
+				2BEC03121F2538D6007B9036 /* RxCocoa.framework in Frameworks */,
+				2BEC030E1F2538D6007B9036 /* RxMKMapView.framework in Frameworks */,
+				2BEC03101F2538D6007B9036 /* MapGrid.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -61,32 +85,19 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8B7900C0E04CCD4942C821E3 /* Pods_AnnotationsExampleUITests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		278D9E2F873969DAC2D8C7DB /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				E641863FF601AB185CA14DDE /* Pods-AnnotationsExample.debug.xcconfig */,
-				DBCEAA019A6EFEAB07A80EAD /* Pods-AnnotationsExample.release.xcconfig */,
-				83A79696D484E9F3BD5960DD /* Pods-AnnotationsExampleUITests.debug.xcconfig */,
-				BC759908F5F3E5138BAE9B01 /* Pods-AnnotationsExampleUITests.release.xcconfig */,
-			);
-			name = Pods;
-			sourceTree = "<group>";
-		};
 		2B92699A1F24A6EA00240ABC = {
 			isa = PBXGroup;
 			children = (
 				2B9269A51F24A6EA00240ABC /* AnnotationsExample */,
 				2B9269BA1F24A6EA00240ABC /* AnnotationsExampleUITests */,
+				2BEC02C91F24B99B007B9036 /* Dependencies */,
 				2B9269A41F24A6EA00240ABC /* Products */,
-				278D9E2F873969DAC2D8C7DB /* Pods */,
-				9BEA62749BEAB29CAA67EE0E /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -122,13 +133,16 @@
 			path = AnnotationsExampleUITests;
 			sourceTree = "<group>";
 		};
-		9BEA62749BEAB29CAA67EE0E /* Frameworks */ = {
+		2BEC02C91F24B99B007B9036 /* Dependencies */ = {
 			isa = PBXGroup;
 			children = (
-				6583F9B07867C0AAF291A815 /* Pods_AnnotationsExample.framework */,
-				3F238A30C1A761E851402F97 /* Pods_AnnotationsExampleUITests.framework */,
+				2BEC02C11F24B996007B9036 /* RxMKMapView.framework */,
+				2BEC02C21F24B996007B9036 /* MapGrid.framework */,
+				2BEC02C31F24B996007B9036 /* RxCocoa.framework */,
+				2BEC02C41F24B996007B9036 /* RxSwift.framework */,
 			);
-			name = Frameworks;
+			name = Dependencies;
+			path = AnnotationsExample;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -138,12 +152,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2B9269C01F24A6EA00240ABC /* Build configuration list for PBXNativeTarget "AnnotationsExample" */;
 			buildPhases = (
-				53D83BB9387C2818B537AC63 /* [CP] Check Pods Manifest.lock */,
 				2B92699F1F24A6EA00240ABC /* Sources */,
 				2B9269A01F24A6EA00240ABC /* Frameworks */,
 				2B9269A11F24A6EA00240ABC /* Resources */,
-				7FB9A8AC3745950EAB47E198 /* [CP] Embed Pods Frameworks */,
-				BC3CC60F6774ACBE8C263CFF /* [CP] Copy Pods Resources */,
+				2BEC02C01F24B8BF007B9036 /* Carthage Copy Frameworks */,
+				2BEC03161F2538D6007B9036 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -158,12 +171,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2B9269C31F24A6EA00240ABC /* Build configuration list for PBXNativeTarget "AnnotationsExampleUITests" */;
 			buildPhases = (
-				93CB928D66B2E8891C4E64F1 /* [CP] Check Pods Manifest.lock */,
 				2B9269B31F24A6EA00240ABC /* Sources */,
 				2B9269B41F24A6EA00240ABC /* Frameworks */,
 				2B9269B51F24A6EA00240ABC /* Resources */,
-				A5A16849A6C9C112E367ABC1 /* [CP] Embed Pods Frameworks */,
-				CF93AB36790F5E53126C5836 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -237,95 +247,25 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		53D83BB9387C2818B537AC63 /* [CP] Check Pods Manifest.lock */ = {
+		2BEC02C01F24B8BF007B9036 /* Carthage Copy Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
+				"$(SRCROOT)/Carthage/Build/iOS/RxSwift.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/RxMKMapView.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/MapGrid.framework",
 			);
-			name = "[CP] Check Pods Manifest.lock";
+			name = "Carthage Copy Frameworks";
 			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxSwift.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxMKMapView.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/MapGrid.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		7FB9A8AC3745950EAB47E198 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-AnnotationsExample/Pods-AnnotationsExample-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		93CB928D66B2E8891C4E64F1 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		A5A16849A6C9C112E367ABC1 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-AnnotationsExampleUITests/Pods-AnnotationsExampleUITests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		BC3CC60F6774ACBE8C263CFF /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-AnnotationsExample/Pods-AnnotationsExample-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		CF93AB36790F5E53126C5836 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-AnnotationsExampleUITests/Pods-AnnotationsExampleUITests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
+			shellScript = "/usr/local/bin/carthage copy-frameworks\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -474,9 +414,13 @@
 		};
 		2B9269C11F24A6EA00240ABC /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E641863FF601AB185CA14DDE /* Pods-AnnotationsExample.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/AnnotationsExample",
+					"$(SRCROOT)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = AnnotationsExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mikkovalimaki.AnnotationsExample;
@@ -487,9 +431,13 @@
 		};
 		2B9269C21F24A6EA00240ABC /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = DBCEAA019A6EFEAB07A80EAD /* Pods-AnnotationsExample.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/AnnotationsExample",
+					"$(SRCROOT)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = AnnotationsExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mikkovalimaki.AnnotationsExample;
@@ -500,7 +448,6 @@
 		};
 		2B9269C41F24A6EA00240ABC /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 83A79696D484E9F3BD5960DD /* Pods-AnnotationsExampleUITests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				INFOPLIST_FILE = AnnotationsExampleUITests/Info.plist;
@@ -514,7 +461,6 @@
 		};
 		2B9269C51F24A6EA00240ABC /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BC759908F5F3E5138BAE9B01 /* Pods-AnnotationsExampleUITests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				INFOPLIST_FILE = AnnotationsExampleUITests/Info.plist;
