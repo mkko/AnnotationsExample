@@ -1,3 +1,4 @@
+git "file:///Users/mval/Development/Personal/RxMKMapView" "19421801036342cc741b6a6620660abf64fe224e"
 github "ReactiveX/RxSwift" "3.6.1"
 github "mkko/MapGrid" "1.0.0"
 github "mkko/RxMKMapView" "e8de984d763aa67767624d26c406e6ce745fd4cd"

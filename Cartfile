@@ -1,3 +1,4 @@
 github "mkko/MapGrid"
 github "ReactiveX/RxSwift" ~> 3.0
-github "mkko/RxMKMapView" "feature/annotation-binding"
+git "file:///Users/mval/Development/Personal/RxMKMapView" "feature/annotation-binding"
+# github "mkko/RxMKMapView" "feature/annotation-binding"

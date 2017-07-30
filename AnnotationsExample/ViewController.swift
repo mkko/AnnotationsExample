@@ -85,6 +85,20 @@ extension ViewController: MKMapViewDelegate {
         renderer.fillColor = UIColor.magenta.withAlphaComponent(0.3)
         return renderer
     }
+    
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        if annotation is MKUserLocation {
+            return nil
+        }
+        let reuseID = "pin"
+        var pinView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseID) as? MKPinAnnotationView
+        if pinView == nil {
+            pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseID)
+            pinView!.canShowCallout = true
+            pinView!.animatesDrop = true
+        }
+        return pinView
+    }
 }
 
 extension MKCoordinateRegion {
