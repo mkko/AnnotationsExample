@@ -109,10 +109,6 @@ extension ViewController: MKMapViewDelegate {
             pinView!.canShowCallout = true
             //pinView!.animatesDrop = true
         }
-        pinView?.alpha = 0.0
-        UIView.animate(withDuration: 0.2, animations: {
-            pinView?.alpha = 1.0
-        })
         return pinView
     }
 }
@@ -193,7 +189,7 @@ public enum AnnotationAnimationType {
             mapView.addAnnotations(diff.added)
         case .fadeInFadeOut:
             mapView.removeAnnotations(diff.removed, animated: true)
-            mapView.addAnnotations(diff.added)
+            mapView.addAnnotations(diff.added, animated: true)
         }
     }
 }
@@ -268,7 +264,7 @@ extension MKMapView {
     
     func removeAnnotations(_ annotations: [MKAnnotation], animated: Bool) {
         if animated {
-            UIView.animate(withDuration: 0.2, animations: { 
+            UIView.animate(withDuration: 0.2, animations: {
                 for view in annotations.flatMap(self.view(for:)) {
                     view.alpha = 0.0
                 }
@@ -278,6 +274,42 @@ extension MKMapView {
         } else {
             self.removeAnnotations(annotations)
         }
+    }
+
+    func addAnnotations(_ annotations: [MKAnnotation], animated: Bool) {
+        if animated {
+            
+            self.addAnnotations(annotations) { views in
+//                print("\(views)")
+                for view in views {
+                    view.alpha = 0.0
+                }
+                UIView.animate(withDuration: 1.2, animations: {
+                    for view in views {
+                        view.alpha = 1.0
+                    }
+                })
+            }
+        } else {
+            self.addAnnotations(annotations)
+        }
+    }
+    
+    func addAnnotations(_ annotations: [MKAnnotation], callback: @escaping ([MKAnnotationView]) -> ()) {
+        let _ = self.rx.didAddAnnotationViews
+            .filter { views in
+                !annotations.contains(where: { $0 === views.first?.annotation})
+            }
+            .take(1)
+            .subscribe { event in
+                switch event {
+                case .next(let e):
+                    callback(e)
+                default:
+                    break
+                }
+        }
+        self.addAnnotations(annotations)
     }
 }
 
