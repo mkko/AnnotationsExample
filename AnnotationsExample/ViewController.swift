@@ -11,6 +11,7 @@ import MapKit
 import MapGrid
 import RxMKMapView
 import RxSwift
+import RxCocoa
 
 class City: NSObject, MKAnnotation {
     
@@ -58,12 +59,22 @@ class ViewController: UIViewController {
             self.cityMap[mapIndex] = tile
         }
         
+//        let x = UILabel()
+//        x.rx.text
+        
+        //let annotations = mapView.rxAnnotations.configure()
+
+//        let x = self.annotationsx2(handler: { diff in
+//            self.base.removeAnnotations(diff.removed)
+//            self.base.addAnnotations(diff.added)
+//        })
+        
         annotationSubscription = mapView.rx.regionDidChangeAnimated
             .map { _ in self.getVisibleRegion(mapView: self.mapView ) }
             .map { region -> [MKAnnotation] in
                 // Load annotations in given region.
                 return self.cityMap.tiles(atRegion: region).flatMap { $0 }
-            }.bind(to: mapView.rx.annotations)
+            }.bind(to: mapView.rx.annotationsx2(animation: .noAnimation))
     }
 }
 
@@ -95,7 +106,7 @@ extension ViewController: MKMapViewDelegate {
         if pinView == nil {
             pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseID)
             pinView!.canShowCallout = true
-            pinView!.animatesDrop = true
+            //pinView!.animatesDrop = true
         }
         return pinView
     }
@@ -164,3 +175,101 @@ func loadCities() -> [City] {
     
     return []
 }
+
+public enum AnnotationAnimationType {
+    case noAnimation
+    case fadeInFadeOut
+    //case custom(MKMapView, AnnotationDiff)
+    
+    func act(mapView: MKMapView, diff: AnnotationDiff) {
+        switch self {
+        case .noAnimation:
+            mapView.removeAnnotations(diff.removed)
+            mapView.addAnnotations(diff.added)
+        case .fadeInFadeOut:
+            mapView.removeAnnotations(diff.removed)
+            mapView.addAnnotations(diff.added)
+        }
+    }
+}
+
+public struct AnnotationDiff {
+    let removed: [MKAnnotation]
+    let added: [MKAnnotation]
+}
+
+extension Reactive where Base: MKMapView {
+    
+//    public func annotationsx<O: ObservableType> (_ source: O)
+//        -> Disposable where O.E == [MKAnnotation] {
+//            let x = self.annotationsx2(handler: { diff in
+//                self.base.removeAnnotations(diff.removed)
+//                self.base.addAnnotations(diff.added)
+//            })
+//            return x
+//    }
+
+    public func annotationsx2<O: ObservableType>(animation: AnnotationAnimationType = .noAnimation) -> (_ source: O)
+        -> Disposable where O.E == [MKAnnotation] {
+            return { source in
+                let shared = source.share()
+                return Observable
+                    .zip(shared.startWith([]), shared) { ($0, $1) }
+                    .subscribe(AnyObserver { event in
+                        if case let .next(element) = event {
+                            let diff = self.diff(a: element.0, b: element.1)
+                            //print("diff: \(diff)")
+                            animation.act(mapView: self.base, diff: diff)
+                        }
+                    })
+            }
+    }
+    
+    
+    func diff(a: [MKAnnotation], b: [MKAnnotation]) -> AnnotationDiff {
+        
+        // TODO: Could be improved in performance.
+        var remainingItems = Array(b) //Set<BoxedAnnotation>(b.map(BoxedAnnotation))
+        //var existingItems = [MKAnnotation]()
+        var removedItems = [MKAnnotation]()
+        
+        // Check the existing ones first.
+        for item in a {
+            if let index = remainingItems.index(where: item.isSame(as:)) {
+                // The item exists still.
+                remainingItems.remove(at: index)
+                //existingItems.append(item)
+            } else {
+                // The item doesn't exist, remove it.
+                removedItems.append(item)
+            }
+        }
+        
+        // Remaining visible indices should be new.
+        let newItems = remainingItems
+        
+        return AnnotationDiff(removed: removedItems, added: newItems)
+    }
+}
+
+extension MKAnnotation {
+    func isSame(as another: MKAnnotation) -> Bool {
+        return another.coordinate.latitude == self.coordinate.latitude
+            && another.coordinate.longitude == self.coordinate.longitude
+    }
+}
+
+//extension MKMapView {
+//    
+//    public var text: RxCocoa.UIBindingObserver<Base, String?> {
+//        return UIBindingObserver(UIElement: self.base) { label, text in
+//            label.text = text
+//        }
+//    }
+//
+//    public var rxAnnotations: RxCocoa.RxCocoa.UIBindingObserver<Base, [MKAnnoation]?> {
+//        return UIBindingObserver(UIElement: self.base) { label, text in
+//            label.text = text
+//        }
+//    }
+//}
