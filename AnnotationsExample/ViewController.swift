@@ -74,7 +74,7 @@ class ViewController: UIViewController {
             .map { region -> [MKAnnotation] in
                 // Load annotations in given region.
                 return self.cityMap.tiles(atRegion: region).flatMap { $0 }
-            }.bind(to: mapView.rx.annotationsx2(animation: .noAnimation))
+            }.bind(to: mapView.rx.annotationsx2(animation: .fadeInFadeOut))
     }
 }
 
@@ -83,6 +83,7 @@ extension ViewController: MKMapViewDelegate {
     func getVisibleRegion(mapView: MKMapView) -> MKCoordinateRegion {
         return mapView.zoomLevel > 13
             ? MKCoordinateRegion()
+//            : mapView.region
             : MKCoordinateRegion(
                 center: mapView.region.center,
                 span: MKCoordinateSpan(
@@ -108,6 +109,10 @@ extension ViewController: MKMapViewDelegate {
             pinView!.canShowCallout = true
             //pinView!.animatesDrop = true
         }
+        pinView?.alpha = 0.0
+        UIView.animate(withDuration: 0.2, animations: {
+            pinView?.alpha = 1.0
+        })
         return pinView
     }
 }
@@ -187,7 +192,7 @@ public enum AnnotationAnimationType {
             mapView.removeAnnotations(diff.removed)
             mapView.addAnnotations(diff.added)
         case .fadeInFadeOut:
-            mapView.removeAnnotations(diff.removed)
+            mapView.removeAnnotations(diff.removed, animated: true)
             mapView.addAnnotations(diff.added)
         }
     }
@@ -256,6 +261,23 @@ extension MKAnnotation {
     func isSame(as another: MKAnnotation) -> Bool {
         return another.coordinate.latitude == self.coordinate.latitude
             && another.coordinate.longitude == self.coordinate.longitude
+    }
+}
+
+extension MKMapView {
+    
+    func removeAnnotations(_ annotations: [MKAnnotation], animated: Bool) {
+        if animated {
+            UIView.animate(withDuration: 0.2, animations: { 
+                for view in annotations.flatMap(self.view(for:)) {
+                    view.alpha = 0.0
+                }
+            }, completion: { _ in
+                self.removeAnnotations(annotations)
+            })
+        } else {
+            self.removeAnnotations(annotations)
+        }
     }
 }
 
