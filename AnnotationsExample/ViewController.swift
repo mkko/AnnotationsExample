@@ -64,7 +64,7 @@ class ViewController: UIViewController {
         
         //let annotations = mapView.rxAnnotations.configure()
 
-//        let x = self.annotationsx2(handler: { diff in
+//        let x = self.annotations(handler: { diff in
 //            self.base.removeAnnotations(diff.removed)
 //            self.base.addAnnotations(diff.added)
 //        })
@@ -74,7 +74,7 @@ class ViewController: UIViewController {
             .map { region -> [MKAnnotation] in
                 // Load annotations in given region.
                 return self.cityMap.tiles(atRegion: region).flatMap { $0 }
-            }.bind(to: mapView.rx.annotationsx2(animation: .fadeInFadeOut))
+            }.bind(to: mapView.rx.annotations(animation: .fadeInFadeOut(duration: 0.2)))
     }
 }
 
@@ -179,17 +179,17 @@ func loadCities() -> [City] {
 
 public enum AnnotationAnimationType {
     case noAnimation
-    case fadeInFadeOut
-    //case custom(MKMapView, AnnotationDiff)
+    case fadeInFadeOut(duration: TimeInterval)
+    // TODO: case custom(MKMapView, AnnotationDiff)
     
     func act(mapView: MKMapView, diff: AnnotationDiff) {
         switch self {
         case .noAnimation:
             mapView.removeAnnotations(diff.removed)
             mapView.addAnnotations(diff.added)
-        case .fadeInFadeOut:
-            mapView.removeAnnotations(diff.removed, animated: true)
-            mapView.addAnnotations(diff.added, animated: true)
+        case .fadeInFadeOut(let duration):
+            mapView.removeAnnotations(diff.removed, animationDuration: duration)
+            mapView.addAnnotations(diff.added, animationDuration: duration)
         }
     }
 }
@@ -201,16 +201,7 @@ public struct AnnotationDiff {
 
 extension Reactive where Base: MKMapView {
     
-//    public func annotationsx<O: ObservableType> (_ source: O)
-//        -> Disposable where O.E == [MKAnnotation] {
-//            let x = self.annotationsx2(handler: { diff in
-//                self.base.removeAnnotations(diff.removed)
-//                self.base.addAnnotations(diff.added)
-//            })
-//            return x
-//    }
-
-    public func annotationsx2<O: ObservableType>(animation: AnnotationAnimationType = .noAnimation) -> (_ source: O)
+    public func annotations<O: ObservableType>(animation: AnnotationAnimationType = .noAnimation) -> (_ source: O)
         -> Disposable where O.E == [MKAnnotation] {
             return { source in
                 let shared = source.share()
@@ -262,68 +253,43 @@ extension MKAnnotation {
 
 extension MKMapView {
     
-    func removeAnnotations(_ annotations: [MKAnnotation], animated: Bool) {
-        if animated {
-            UIView.animate(withDuration: 0.2, animations: {
-                for view in annotations.flatMap(self.view(for:)) {
-                    view.alpha = 0.0
-                }
-            }, completion: { _ in
-                self.removeAnnotations(annotations)
-            })
-        } else {
+    func removeAnnotations(_ annotations: [MKAnnotation], animationDuration: TimeInterval) {
+        UIView.animate(withDuration: animationDuration, animations: {
+            for view in annotations.flatMap(self.view(for:)) {
+                view.alpha = 0.0
+            }
+        }, completion: { _ in
             self.removeAnnotations(annotations)
-        }
+        })
     }
 
-    func addAnnotations(_ annotations: [MKAnnotation], animated: Bool) {
-        if animated {
-            
-            self.addAnnotations(annotations) { views in
-//                print("\(views)")
-                for view in views {
-                    view.alpha = 0.0
-                }
-                UIView.animate(withDuration: 1.2, animations: {
-                    for view in views {
-                        view.alpha = 1.0
-                    }
-                })
+    func addAnnotations(_ annotations: [MKAnnotation], animationDuration: TimeInterval) {
+        self.addAnnotations(annotations) { views in
+            for view in views {
+                view.alpha = 0.0
             }
-        } else {
-            self.addAnnotations(annotations)
+            UIView.animate(withDuration: animationDuration, animations: {
+                for view in views {
+                    view.alpha = 1.0
+                }
+            })
         }
     }
     
     func addAnnotations(_ annotations: [MKAnnotation], callback: @escaping ([MKAnnotationView]) -> ()) {
+        // Subscribe to the next mapView(_:didAdd:) to get the added views.
         let _ = self.rx.didAddAnnotationViews
-            .filter { views in
-                !annotations.contains(where: { $0 === views.first?.annotation})
-            }
+            .filter { areTheSame(annotations, $0) }
             .take(1)
             .subscribe { event in
-                switch event {
-                case .next(let e):
+                if case .next(let e) = event {
                     callback(e)
-                default:
-                    break
                 }
         }
         self.addAnnotations(annotations)
     }
 }
 
-//extension MKMapView {
-//    
-//    public var text: RxCocoa.UIBindingObserver<Base, String?> {
-//        return UIBindingObserver(UIElement: self.base) { label, text in
-//            label.text = text
-//        }
-//    }
-//
-//    public var rxAnnotations: RxCocoa.RxCocoa.UIBindingObserver<Base, [MKAnnoation]?> {
-//        return UIBindingObserver(UIElement: self.base) { label, text in
-//            label.text = text
-//        }
-//    }
-//}
+private func areTheSame(_ annotations: [MKAnnotation], _ views: [MKAnnotationView]) -> Bool {
+    return !annotations.contains(where: { $0 === views.first?.annotation})
+}
