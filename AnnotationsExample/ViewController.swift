@@ -258,7 +258,7 @@ extension Reactive where Base: MKMapView {
             /*Animator.Element == O.E*/ {
                 return { source in
                     return source
-                        .subscribe({ (event: Event<[MKAnnotation]>) in
+                        .subscribe({ event in
                             //let diff = self.diff(a: element.0, b: element.1)
                             //print("diff: \(diff)")
                             animator.mapView(self.base, observedEvent: event)
