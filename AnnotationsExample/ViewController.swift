@@ -69,12 +69,21 @@ class ViewController: UIViewController {
 //            self.base.addAnnotations(diff.added)
 //        })
         
-        annotationSubscription = mapView.rx.regionDidChangeAnimated
-            .map { _ in self.getVisibleRegion(mapView: self.mapView ) }
-            .map { region -> [MKAnnotation] in
-                // Load annotations in given region.
-                return self.cityMap.tiles(atRegion: region).flatMap { $0 }
-            }.bind(to: mapView.rx.annotations(animation: .fadeInFadeOut(duration: 0.2)))
+//        annotationSubscription = mapView.rx.regionDidChangeAnimated
+//            .map { _ in self.getVisibleRegion(mapView: self.mapView ) }
+//            .map { region -> [MKAnnotation] in
+//                // Load annotations in given region.
+//                return self.cityMap.tiles(atRegion: region).flatMap { $0 }
+//            }.bind(to: mapView.rx.annotations(animation: .fadeInFadeOut(duration: 0.2)))
+        
+        let _ = mapView.rx.annotationsx2(animator: RxMapViewFadeInOutAnimator())
+        
+//        annotationSubscription = mapView.rx.regionDidChangeAnimated
+//            .map { _ in self.getVisibleRegion(mapView: self.mapView ) }
+//            .map { region -> [MKAnnotation] in
+//                // Load annotations in given region.
+//                return self.cityMap.tiles(atRegion: region).flatMap { $0 }
+//            }.bind(to: annotations)
     }
 }
 
@@ -199,11 +208,73 @@ public struct AnnotationDiff {
     let added: [MKAnnotation]
 }
 
+public protocol RxMapViewAnimatorType {
+    
+    /// Type of elements that can be bound to table view.
+    associatedtype Element
+    
+    /// New observable sequence event observed.
+    ///
+    /// - parameter mapView: Bound map view.
+    /// - parameter observedEvent: Event
+    func mapView(_ mapView: MKMapView, observedEvent: Event<Element>) -> Void
+}
+
+public class RxMapViewFadeInOutAnimator: RxMapViewAnimatorType {
+    
+    public typealias Element = MKAnnotation
+    
+    /// New observable sequence event observed.
+    ///
+    /// - parameter mapView: Bound map view.
+    /// - parameter observedEvent: Event
+    public func mapView(_ mapView: MKMapView, observedEvent: Event<MKAnnotation>) {
+        
+    }
+}
+
 extension Reactive where Base: MKMapView {
     
-    public func annotations<O: ObservableType>(animation: AnnotationAnimationType = .noAnimation) -> (_ source: O)
-        -> Disposable where O.E == [MKAnnotation] {
+//    public func annotationsx<
+//        Animator: RxMapViewAnimatorType,
+//        O: ObservableType>
+//        (fadeDuration: TimeInterval)
+//        -> (_ source: O)
+//        -> Disposable
+//        where Animator.Element == O.E {
+//            return { source in
+//                let animator = RxMapViewFadeInOutAnimator()
+//                let x = self.annotationsx2(animator: animator)
+//                
+//                return Disposables.create() // self.annotationsx(dataSource: animator)(source)
+//            }
+//    }
+    
+    public func annotationsx2<
+            Animator: RxMapViewAnimatorType,
+            O: ObservableType>
+            (animator: Animator)
+            -> (_ source: O)
+            -> Disposable
+            where Animator.Element == O.E {
+                return { source in
+                    return source
+                        .subscribe({ event in
+                            //let diff = self.diff(a: element.0, b: element.1)
+                            //print("diff: \(diff)")
+                            animator.mapView(self.base, observedEvent: event)
+                        })
+                }
+    }
+
+    public func annotations<
+        O: ObservableType>
+        (animation: AnnotationAnimationType = .noAnimation)
+        -> (_ source: O)
+        -> Disposable
+        where O.E == [MKAnnotation] {
             return { source in
+                
                 let shared = source.share()
                 return Observable
                     .zip(shared.startWith([]), shared) { ($0, $1) }
