@@ -209,23 +209,19 @@ public struct AnnotationDiff {
 public protocol RxMapViewAnimatorType {
     
     /// Type of elements that can be bound to table view.
-    associatedtype Element
+//    associatedtype Element
     
     /// New observable sequence event observed.
     ///
     /// - parameter mapView: Bound map view.
     /// - parameter observedEvent: Event
-    func mapView(_ mapView: MKMapView, observedEvent: Event<[Element]>) -> Void
+    func mapView(_ mapView: MKMapView, observedEvent: Event<[MKAnnotation]>) -> Void
 }
 
 public class RxMapViewFadeInOutAnimator: RxMapViewAnimatorType {
     
     public typealias Element = MKAnnotation
     
-    /// New observable sequence event observed.
-    ///
-    /// - parameter mapView: Bound map view.
-    /// - parameter observedEvent: Event
     public func mapView(_ mapView: MKMapView, observedEvent: Event<[MKAnnotation]>) {
         
     }
@@ -249,13 +245,13 @@ extension Reactive where Base: MKMapView {
 //    }
     
     public func annotationsx2<
-            //Animator: RxMapViewAnimatorType,
+            Animator: RxMapViewAnimatorType,
             O: ObservableType>
-            (animator: RxMapViewFadeInOutAnimator /*Animator*/)
+            (animator: Animator)
             -> (_ source: O)
             -> Disposable
-            where  O.E == [MKAnnotation]
-            /*Animator.Element == O.E*/ {
+        where O.E == [MKAnnotation]
+        /*Animator.Element == O.E*/ {
                 return { source in
                     return source
                         .subscribe({ event in
