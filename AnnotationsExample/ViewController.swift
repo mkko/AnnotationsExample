@@ -74,16 +74,14 @@ class ViewController: UIViewController {
 //            .map { region -> [MKAnnotation] in
 //                // Load annotations in given region.
 //                return self.cityMap.tiles(atRegion: region).flatMap { $0 }
-//            }.bind(to: mapView.rx.annotations(animation: .fadeInFadeOut(duration: 0.2)))
+//            }.bind(to: mapView.rx.annotations2(animation: .fadeInFadeOut(duration: 0.2)))
         
-        let _ = mapView.rx.annotationsx2(animator: RxMapViewFadeInOutAnimator())
-        
-//        annotationSubscription = mapView.rx.regionDidChangeAnimated
-//            .map { _ in self.getVisibleRegion(mapView: self.mapView ) }
-//            .map { region -> [MKAnnotation] in
-//                // Load annotations in given region.
-//                return self.cityMap.tiles(atRegion: region).flatMap { $0 }
-//            }.bind(to: annotations)
+        annotationSubscription = mapView.rx.regionDidChangeAnimated
+            .map { _ in self.getVisibleRegion(mapView: self.mapView ) }
+            .map { region -> [MKAnnotation] in
+                // Load annotations in given region.
+                return self.cityMap.tiles(atRegion: region).flatMap { $0 }
+            }.bind(to: mapView.rx.annotationsx2(animator: RxMapViewFadeInOutAnimator()))
     }
 }
 
@@ -217,7 +215,7 @@ public protocol RxMapViewAnimatorType {
     ///
     /// - parameter mapView: Bound map view.
     /// - parameter observedEvent: Event
-    func mapView(_ mapView: MKMapView, observedEvent: Event<Element>) -> Void
+    func mapView(_ mapView: MKMapView, observedEvent: Event<[Element]>) -> Void
 }
 
 public class RxMapViewFadeInOutAnimator: RxMapViewAnimatorType {
@@ -228,7 +226,7 @@ public class RxMapViewFadeInOutAnimator: RxMapViewAnimatorType {
     ///
     /// - parameter mapView: Bound map view.
     /// - parameter observedEvent: Event
-    public func mapView(_ mapView: MKMapView, observedEvent: Event<MKAnnotation>) {
+    public func mapView(_ mapView: MKMapView, observedEvent: Event<[MKAnnotation]>) {
         
     }
 }
@@ -251,15 +249,16 @@ extension Reactive where Base: MKMapView {
 //    }
     
     public func annotationsx2<
-            Animator: RxMapViewAnimatorType,
+            //Animator: RxMapViewAnimatorType,
             O: ObservableType>
-            (animator: Animator)
+            (animator: RxMapViewFadeInOutAnimator /*Animator*/)
             -> (_ source: O)
             -> Disposable
-            where Animator.Element == O.E {
+            where  O.E == [MKAnnotation]
+            /*Animator.Element == O.E*/ {
                 return { source in
                     return source
-                        .subscribe({ event in
+                        .subscribe({ (event: Event<[MKAnnotation]>) in
                             //let diff = self.diff(a: element.0, b: element.1)
                             //print("diff: \(diff)")
                             animator.mapView(self.base, observedEvent: event)
@@ -267,7 +266,7 @@ extension Reactive where Base: MKMapView {
                 }
     }
 
-    public func annotations<
+    public func annotations2<
         O: ObservableType>
         (animation: AnnotationAnimationType = .noAnimation)
         -> (_ source: O)
