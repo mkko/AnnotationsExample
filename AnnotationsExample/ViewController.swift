@@ -201,12 +201,12 @@ public class RxMapViewFadeInOutAnimator: RxMapViewAnimatorType {
     init(mapView: MKMapView, animationDuration duration: TimeInterval = defaultDuration) {
         self.duration = duration
         mapView.rx.didAddAnnotationViews
-        .subscribe { event in
-            if case .next(let annotations) = event {
-                let newAnnotations = annotations.filter(self.shouldAnimate(annotation:))
-                self.animateNew(views: newAnnotations)
-            }
-        }.addDisposableTo(disposeBag)
+            .subscribe { event in
+                if case .next(let annotations) = event {
+                    let newAnnotations = annotations.filter(self.shouldAnimate(annotation:))
+                    self.animateNew(views: newAnnotations)
+                }
+            }.addDisposableTo(disposeBag)
     }
     
     public func mapView(_ mapView: MKMapView, observedEvent: Event<[MKAnnotation]>) {
@@ -216,7 +216,8 @@ public class RxMapViewFadeInOutAnimator: RxMapViewAnimatorType {
                 let diff = differencesForAnnotations(a: self.currentAnnotations, b: newAnnotations)
                 self.currentAnnotations = newAnnotations
                 
-                mapView.removeAnnotations(diff.removed, animationDuration: self.duration)
+                // The subscription is used to animate new annotations. The removal can be animated in place.
+                self.removeAnnotations(diff.removed, mapView: mapView, animationDuration: self.duration)
                 mapView.addAnnotations(diff.added)
             }
         }.on(observedEvent)
@@ -234,6 +235,16 @@ public class RxMapViewFadeInOutAnimator: RxMapViewAnimatorType {
             for view in views {
                 view.alpha = 1.0
             }
+        })
+    }
+    
+    func removeAnnotations(_ annotations: [MKAnnotation], mapView: MKMapView, animationDuration: TimeInterval) {
+        UIView.animate(withDuration: animationDuration, animations: {
+            for view in annotations.flatMap(mapView.view(for:)) {
+                view.alpha = 0.0
+            }
+        }, completion: { _ in
+            mapView.removeAnnotations(annotations)
         })
     }
 }
@@ -262,8 +273,6 @@ extension Reactive where Base: MKMapView {
                 return { source in
                     return source
                         .subscribe({ event in
-                            //let diff = self.diff(a: element.0, b: element.1)
-                            //print("diff: \(diff)")
                             animator.mapView(self.base, observedEvent: event)
                         })
                 }
@@ -277,19 +286,6 @@ extension MKAnnotation {
     }
 }
 
-extension MKMapView {
-    
-    func removeAnnotations(_ annotations: [MKAnnotation], animationDuration: TimeInterval) {
-        UIView.animate(withDuration: animationDuration, animations: {
-            for view in annotations.flatMap(self.view(for:)) {
-                view.alpha = 0.0
-            }
-        }, completion: { _ in
-            self.removeAnnotations(annotations)
-        })
-    }
-}
-
 public struct AnnotationDiff {
     let removed: [MKAnnotation]
     let added: [MKAnnotation]
@@ -298,8 +294,7 @@ public struct AnnotationDiff {
 func differencesForAnnotations(a: [MKAnnotation], b: [MKAnnotation]) -> AnnotationDiff {
     
     // TODO: Could be improved in performance.
-    var remainingItems = Array(b) //Set<BoxedAnnotation>(b.map(BoxedAnnotation))
-    //var existingItems = [MKAnnotation]()
+    var remainingItems = Array(b)
     var removedItems = [MKAnnotation]()
     
     // Check the existing ones first.
@@ -307,7 +302,6 @@ func differencesForAnnotations(a: [MKAnnotation], b: [MKAnnotation]) -> Annotati
         if let index = remainingItems.index(where: item.isSame(as:)) {
             // The item exists still.
             remainingItems.remove(at: index)
-            //existingItems.append(item)
         } else {
             // The item doesn't exist, remove it.
             removedItems.append(item)
