@@ -196,8 +196,17 @@ public class RxMapViewFadeInOutAnimator: RxMapViewAnimatorType {
     
     var currentAnnotations: [MKAnnotation] = []
     
-    init(animationDuration duration: TimeInterval = defaultDuration) {
+    let disposeBag = DisposeBag()
+    
+    init(mapView: MKMapView, animationDuration duration: TimeInterval = defaultDuration) {
         self.duration = duration
+        mapView.rx.didAddAnnotationViews
+        .subscribe { event in
+            if case .next(let annotations) = event {
+                let newAnnotations = annotations.filter(self.shouldAnimate(annotation:))
+                self.animateNew(views: newAnnotations)
+            }
+        }.addDisposableTo(disposeBag)
     }
     
     public func mapView(_ mapView: MKMapView, observedEvent: Event<[MKAnnotation]>) {
@@ -208,9 +217,24 @@ public class RxMapViewFadeInOutAnimator: RxMapViewAnimatorType {
                 self.currentAnnotations = newAnnotations
                 
                 mapView.removeAnnotations(diff.removed, animationDuration: self.duration)
-                mapView.addAnnotations(diff.added, animationDuration: self.duration)
+                mapView.addAnnotations(diff.added)
             }
         }.on(observedEvent)
+    }
+    
+    private func shouldAnimate(annotation: MKAnnotationView) -> Bool {
+        return true
+    }
+    
+    private func animateNew(views: [MKAnnotationView]) {
+        for view in views {
+            view.alpha = 0.0
+        }
+        UIView.animate(withDuration: self.duration, animations: {
+            for view in views {
+                view.alpha = 1.0
+            }
+        })
     }
 }
 
@@ -222,7 +246,7 @@ extension Reactive where Base: MKMapView {
         -> Disposable
         where O.E == [MKAnnotation] {
             return { source in
-                let animator = RxMapViewFadeInOutAnimator(animationDuration: fadeDuration)
+                let animator = RxMapViewFadeInOutAnimator(mapView: self.base, animationDuration: fadeDuration)
                 return self.annotations(animator: animator)(source)
             }
     }
@@ -263,32 +287,6 @@ extension MKMapView {
         }, completion: { _ in
             self.removeAnnotations(annotations)
         })
-    }
-
-    func addAnnotations(_ annotations: [MKAnnotation], animationDuration: TimeInterval) {
-        self.addAnnotations(annotations) { views in
-            for view in views {
-                view.alpha = 0.0
-            }
-            UIView.animate(withDuration: animationDuration, animations: {
-                for view in views {
-                    view.alpha = 1.0
-                }
-            })
-        }
-    }
-    
-    func addAnnotations(_ annotations: [MKAnnotation], callback: @escaping ([MKAnnotationView]) -> ()) {
-        // Subscribe to the next mapView(_:didAdd:) to get the added views.
-        let _ = self.rx.didAddAnnotationViews
-            .filter { areTheSame(annotations, $0) }
-            .take(1)
-            .subscribe { event in
-                if case .next(let e) = event {
-                    callback(e)
-                }
-        }
-        self.addAnnotations(annotations)
     }
 }
 
