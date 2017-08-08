@@ -59,29 +59,19 @@ class ViewController: UIViewController {
             self.cityMap[mapIndex] = tile
         }
         
-//        let x = UILabel()
-//        x.rx.text
-        
-        //let annotations = mapView.rxAnnotations.configure()
-
-//        let x = self.annotations(handler: { diff in
-//            self.base.removeAnnotations(diff.removed)
-//            self.base.addAnnotations(diff.added)
-//        })
-        
 //        annotationSubscription = mapView.rx.regionDidChangeAnimated
 //            .map { _ in self.getVisibleRegion(mapView: self.mapView ) }
 //            .map { region -> [MKAnnotation] in
 //                // Load annotations in given region.
 //                return self.cityMap.tiles(atRegion: region).flatMap { $0 }
-//            }.bind(to: mapView.rx.annotations2(animation: .fadeInFadeOut(duration: 0.2)))
+//            }.bind(to: mapView.rx.annotationsx(animator: RxMapViewFadeInOutAnimator()))
         
         annotationSubscription = mapView.rx.regionDidChangeAnimated
             .map { _ in self.getVisibleRegion(mapView: self.mapView ) }
             .map { region -> [MKAnnotation] in
                 // Load annotations in given region.
                 return self.cityMap.tiles(atRegion: region).flatMap { $0 }
-            }.bind(to: mapView.rx.annotationsx2(animator: RxMapViewFadeInOutAnimator()))
+            }.bind(to: mapView.rx.annotations(fadeDuration: 1.2))
     }
 }
 
@@ -184,28 +174,6 @@ func loadCities() -> [City] {
     return []
 }
 
-public enum AnnotationAnimationType {
-    case noAnimation
-    case fadeInFadeOut(duration: TimeInterval)
-    // TODO: case custom(MKMapView, AnnotationDiff)
-    
-    func act(mapView: MKMapView, diff: AnnotationDiff) {
-        switch self {
-        case .noAnimation:
-            mapView.removeAnnotations(diff.removed)
-            mapView.addAnnotations(diff.added)
-        case .fadeInFadeOut(let duration):
-            mapView.removeAnnotations(diff.removed, animationDuration: duration)
-            mapView.addAnnotations(diff.added, animationDuration: duration)
-        }
-    }
-}
-
-public struct AnnotationDiff {
-    let removed: [MKAnnotation]
-    let added: [MKAnnotation]
-}
-
 public protocol RxMapViewAnimatorType {
     
     /// Type of elements that can be bound to table view.
@@ -218,33 +186,48 @@ public protocol RxMapViewAnimatorType {
     func mapView(_ mapView: MKMapView, observedEvent: Event<[Element]>) -> Void
 }
 
+let defaultDuration: TimeInterval = 0.2
+
 public class RxMapViewFadeInOutAnimator: RxMapViewAnimatorType {
     
     public typealias Element = MKAnnotation
     
+    let duration: TimeInterval
+    
+    var currentAnnotations: [MKAnnotation] = []
+    
+    init(animationDuration duration: TimeInterval = defaultDuration) {
+        self.duration = duration
+    }
+    
     public func mapView(_ mapView: MKMapView, observedEvent: Event<[MKAnnotation]>) {
-        print("\(observedEvent)")
+        UIBindingObserver(UIElement: self) { (animator, newAnnotations) in
+            DispatchQueue.main.async {
+                
+                let diff = differencesForAnnotations(a: self.currentAnnotations, b: newAnnotations)
+                self.currentAnnotations = newAnnotations
+                
+                mapView.removeAnnotations(diff.removed, animationDuration: self.duration)
+                mapView.addAnnotations(diff.added, animationDuration: self.duration)
+            }
+        }.on(observedEvent)
     }
 }
 
 extension Reactive where Base: MKMapView {
     
-//    public func annotationsx<
-//        Animator: RxMapViewAnimatorType,
-//        O: ObservableType>
-//        (fadeDuration: TimeInterval)
-//        -> (_ source: O)
-//        -> Disposable
-//        where Animator.Element == O.E {
-//            return { source in
-//                let animator = RxMapViewFadeInOutAnimator()
-//                let x = self.annotationsx2(animator: animator)
-//                
-//                return Disposables.create() // self.annotationsx(dataSource: animator)(source)
-//            }
-//    }
+    public func annotations<O: ObservableType>
+        (fadeDuration: TimeInterval)
+        -> (_ source: O)
+        -> Disposable
+        where O.E == [MKAnnotation] {
+            return { source in
+                let animator = RxMapViewFadeInOutAnimator(animationDuration: fadeDuration)
+                return self.annotations(animator: animator)(source)
+            }
+    }
     
-    public func annotationsx2<
+    public func annotations<
             Animator: RxMapViewAnimatorType,
             O: ObservableType>
             (animator: Animator)
@@ -260,53 +243,6 @@ extension Reactive where Base: MKMapView {
                             animator.mapView(self.base, observedEvent: event)
                         })
                 }
-    }
-
-    public func annotations2<
-        O: ObservableType>
-        (animation: AnnotationAnimationType = .noAnimation)
-        -> (_ source: O)
-        -> Disposable
-        where O.E == [MKAnnotation] {
-            return { source in
-                
-                let shared = source.share()
-                return Observable
-                    .zip(shared.startWith([]), shared) { ($0, $1) }
-                    .subscribe(AnyObserver { event in
-                        if case let .next(element) = event {
-                            let diff = self.diff(a: element.0, b: element.1)
-                            //print("diff: \(diff)")
-                            animation.act(mapView: self.base, diff: diff)
-                        }
-                    })
-            }
-    }
-    
-    
-    func diff(a: [MKAnnotation], b: [MKAnnotation]) -> AnnotationDiff {
-        
-        // TODO: Could be improved in performance.
-        var remainingItems = Array(b) //Set<BoxedAnnotation>(b.map(BoxedAnnotation))
-        //var existingItems = [MKAnnotation]()
-        var removedItems = [MKAnnotation]()
-        
-        // Check the existing ones first.
-        for item in a {
-            if let index = remainingItems.index(where: item.isSame(as:)) {
-                // The item exists still.
-                remainingItems.remove(at: index)
-                //existingItems.append(item)
-            } else {
-                // The item doesn't exist, remove it.
-                removedItems.append(item)
-            }
-        }
-        
-        // Remaining visible indices should be new.
-        let newItems = remainingItems
-        
-        return AnnotationDiff(removed: removedItems, added: newItems)
     }
 }
 
@@ -354,6 +290,36 @@ extension MKMapView {
         }
         self.addAnnotations(annotations)
     }
+}
+
+public struct AnnotationDiff {
+    let removed: [MKAnnotation]
+    let added: [MKAnnotation]
+}
+
+func differencesForAnnotations(a: [MKAnnotation], b: [MKAnnotation]) -> AnnotationDiff {
+    
+    // TODO: Could be improved in performance.
+    var remainingItems = Array(b) //Set<BoxedAnnotation>(b.map(BoxedAnnotation))
+    //var existingItems = [MKAnnotation]()
+    var removedItems = [MKAnnotation]()
+    
+    // Check the existing ones first.
+    for item in a {
+        if let index = remainingItems.index(where: item.isSame(as:)) {
+            // The item exists still.
+            remainingItems.remove(at: index)
+            //existingItems.append(item)
+        } else {
+            // The item doesn't exist, remove it.
+            removedItems.append(item)
+        }
+    }
+    
+    // Remaining visible indices should be new.
+    let newItems = remainingItems
+    
+    return AnnotationDiff(removed: removedItems, added: newItems)
 }
 
 private func areTheSame(_ annotations: [MKAnnotation], _ views: [MKAnnotationView]) -> Bool {
