@@ -13,25 +13,25 @@ import RxMKMapView
 import RxSwift
 import RxCocoa
 
-class City: NSObject, MKAnnotation {
-    
-    let coordinate: CLLocationCoordinate2D
-    
-    let title: String?
-    
-    var subtitle: String? { return "Population \(population)" }
-    
-    let population: Double
-    
-    init(title: String, coordinate: CLLocationCoordinate2D, population: Double) {
-        self.title = title
-        self.coordinate = coordinate
-        self.population = population
-    }
-}
+//class City: MKPointAnnotation {
+//    
+////    let coordinate: CLLocationCoordinate2D
+////    
+////    let title: String?
+////    
+////    var subtitle: String? { return "Population \(population)" }
+//    
+//    let population: Double
+//    
+//    init(title: String, coordinate: CLLocationCoordinate2D, population: Double) {
+//        self.title = title
+//        self.coordinate = coordinate
+//        self.population = population
+//    }
+//}
 
 struct Tile {
-    let cities: [City]
+    let cities: [MKPointAnnotation]
     let overlay: MKOverlay
 }
 
@@ -45,16 +45,18 @@ class ViewController: UIViewController {
     
     var grid = MapGrid<Tile>(tileSize: 100000 /* meters */)
     
-    var cityMap = MapGrid<[City]>(tileSize: 5000)
+    var cityMap = MapGrid<[MKPointAnnotation]>(tileSize: 5000)
     
     private var annotationSubscription: Disposable! = nil
+    
+    private let disposeBag = DisposeBag()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
         for city in loadCities() {
             let mapIndex = self.cityMap.indexForCoordinate(city.coordinate)
-            var tile = self.cityMap[mapIndex] ?? [City]()
+            var tile = self.cityMap[mapIndex] ?? [MKPointAnnotation]()
             tile.append(city)
             self.cityMap[mapIndex] = tile
         }
@@ -68,10 +70,25 @@ class ViewController: UIViewController {
         
         annotationSubscription = mapView.rx.regionDidChangeAnimated
             .map { _ in self.getVisibleRegion(mapView: self.mapView ) }
-            .map { region -> [MKAnnotation] in
+            .map { region -> [MKPointAnnotation] in
                 // Load annotations in given region.
                 return self.cityMap.tiles(atRegion: region).flatMap { $0 }
-            }.bind(to: mapView.rx.annotations(fadeDuration: 1.2))
+            }.bind(to: mapView.rx.annotations)
+        
+        // Animate new annotations
+        mapView.rx.didAddAnnotationViews
+        .subscribe { event in
+            if case .next(let annotationViews) = event {
+                for view in annotationViews {
+                    view.alpha = 0.0
+                }
+                UIView.animate(withDuration: 1.2, animations: {
+                    for view in annotationViews {
+                        view.alpha = 1.0
+                    }
+                })
+            }
+        }.addDisposableTo(disposeBag)
     }
 }
 
@@ -145,13 +162,13 @@ extension MKMapView {
     }
 }
 
-func loadCities() -> [City] {
+func loadCities() -> [MKPointAnnotation] {
     if let path = Bundle.main.path(forResource: "simplemaps-worldcities-basic", ofType: "csv") {
         // Just read the whole chunk, it should be small enough for the example.
         do {
             let data = try String(contentsOfFile: path, encoding: .utf8)
             let lines = data.components(separatedBy: .newlines)
-            let cities = lines.flatMap { line -> City? in
+            let cities = lines.flatMap { line -> MKPointAnnotation? in
                 let csv = line.components(separatedBy: ",")
                 guard csv.count > 3,
                     let lat = Double(csv[2]),
@@ -162,7 +179,11 @@ func loadCities() -> [City] {
                 }
                 let name = csv[0]
                 let coord = CLLocationCoordinate2D(latitude: lat, longitude: lon)
-                return City(title: name, coordinate: coord, population: pop)
+                let a = MKPointAnnotation()//(title: name, coordinate: coord, population: pop)
+                a.title = name
+                a.coordinate = coord
+                a.subtitle = "Population \(pop)"
+                return a
             }
             return cities
         } catch {
