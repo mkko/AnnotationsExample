@@ -64,7 +64,7 @@ class ViewController: UIViewController {
 //            .map { region -> [MKAnnotation] in
 //                // Load annotations in given region.
 //                return self.cityMap.tiles(atRegion: region).flatMap { $0 }
-//            }.bind(to: mapView.rx.annotationsx(animator: RxMapViewFadeInOutAnimator()))
+//            }.bind(to: mapView.rx.annotationsx(dataSource: RxMapViewFadeInOutDataSource()))
         
         annotationSubscription = mapView.rx.regionDidChangeAnimated
             .map { _ in self.getVisibleRegion(mapView: self.mapView ) }
@@ -174,7 +174,7 @@ func loadCities() -> [City] {
     return []
 }
 
-public protocol RxMapViewAnimatorType {
+public protocol RxMapViewDataSourceType {
     
     /// Type of elements that can be bound to table view.
     associatedtype Element
@@ -186,96 +186,41 @@ public protocol RxMapViewAnimatorType {
     func mapView(_ mapView: MKMapView, observedEvent: Event<[Element]>) -> Void
 }
 
-let defaultDuration: TimeInterval = 0.2
-
-public class RxMapViewFadeInOutAnimator: RxMapViewAnimatorType {
-    
-    public typealias Element = MKAnnotation
-    
-    let duration: TimeInterval
-    
-    var currentAnnotations: [MKAnnotation] = []
-    
-    let disposeBag = DisposeBag()
-    
-    init(mapView: MKMapView, animationDuration duration: TimeInterval = defaultDuration) {
-        self.duration = duration
-        mapView.rx.didAddAnnotationViews
-            .subscribe { event in
-                if case .next(let annotations) = event {
-                    let newAnnotations = annotations.filter(self.shouldAnimate(annotation:))
-                    self.animateNew(views: newAnnotations)
-                }
-            }.addDisposableTo(disposeBag)
-    }
-    
-    public func mapView(_ mapView: MKMapView, observedEvent: Event<[MKAnnotation]>) {
-        UIBindingObserver(UIElement: self) { (animator, newAnnotations) in
-            DispatchQueue.main.async {
-                
-                let diff = differencesForAnnotations(a: self.currentAnnotations, b: newAnnotations)
-                self.currentAnnotations = newAnnotations
-                
-                // The subscription is used to animate new annotations. The removal can be animated in place.
-                self.removeAnnotations(diff.removed, mapView: mapView, animationDuration: self.duration)
-                mapView.addAnnotations(diff.added)
-            }
-        }.on(observedEvent)
-    }
-    
-    private func shouldAnimate(annotation: MKAnnotationView) -> Bool {
-        return true
-    }
-    
-    private func animateNew(views: [MKAnnotationView]) {
-        for view in views {
-            view.alpha = 0.0
-        }
-        UIView.animate(withDuration: self.duration, animations: {
-            for view in views {
-                view.alpha = 1.0
-            }
-        })
-    }
-    
-    func removeAnnotations(_ annotations: [MKAnnotation], mapView: MKMapView, animationDuration: TimeInterval) {
-        UIView.animate(withDuration: animationDuration, animations: {
-            for view in annotations.flatMap(mapView.view(for:)) {
-                view.alpha = 0.0
-            }
-        }, completion: { _ in
-            mapView.removeAnnotations(annotations)
-        })
-    }
-}
-
 extension Reactive where Base: MKMapView {
     
+    public func annotations<O: ObservableType>
+        (_ source: O)
+        -> Disposable
+        where O.E == [MKAnnotation] {
+            let dataSource = RxMapViewReactiveDataSource()
+            return self.annotations(dataSource: dataSource)(source)
+    }
+    
+    public func annotations<
+        DataSource: RxMapViewDataSourceType,
+        O: ObservableType>
+        (dataSource: DataSource)
+        -> (_ source: O)
+        -> Disposable
+        where O.E == [DataSource.Element],
+        DataSource.Element: MKAnnotation {
+            return { source in
+                return source
+                    .subscribe({ event in
+                        dataSource.mapView(self.base, observedEvent: event)
+                    })
+            }
+    }
+
     public func annotations<O: ObservableType>
         (fadeDuration: TimeInterval)
         -> (_ source: O)
         -> Disposable
         where O.E == [MKAnnotation] {
             return { source in
-                let animator = RxMapViewFadeInOutAnimator(mapView: self.base, animationDuration: fadeDuration)
-                return self.annotations(animator: animator)(source)
+                let dataSource = RxMapViewAnimatedDataSource(mapView: self.base, animationDuration: fadeDuration)
+                return self.annotations(dataSource: dataSource)(source)
             }
-    }
-    
-    public func annotations<
-            Animator: RxMapViewAnimatorType,
-            O: ObservableType>
-            (animator: Animator)
-            -> (_ source: O)
-            -> Disposable
-        where O.E == [Animator.Element],
-        Animator.Element: MKAnnotation {
-                return { source in
-                    return source
-                        .subscribe({ event in
-                            animator.mapView(self.base, observedEvent: event)
-                        })
-                }
     }
 }
 
