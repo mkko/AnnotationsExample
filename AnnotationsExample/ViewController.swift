@@ -68,27 +68,45 @@ class ViewController: UIViewController {
 //                return self.cityMap.tiles(atRegion: region).flatMap { $0 }
 //            }.bind(to: mapView.rx.annotationsx(dataSource: RxMapViewFadeInOutDataSource()))
         
-        annotationSubscription = mapView.rx.regionDidChangeAnimated
-            .map { _ in self.getVisibleRegion(mapView: self.mapView ) }
-            .map { region -> [MKPointAnnotation] in
-                // Load annotations in given region.
-                return self.cityMap.tiles(atRegion: region).flatMap { $0 }
-            }.bind(to: mapView.rx.annotations)
+        let annotation1 = MKPointAnnotation()
+        annotation1.title = "title1"
+        annotation1.subtitle = "subtitle1"
+        annotation1.coordinate = CLLocationCoordinate2D(latitude: 0.1, longitude: 0.1)
         
-        // Animate new annotations
-        mapView.rx.didAddAnnotationViews
-        .subscribe { event in
-            if case .next(let annotationViews) = event {
-                for view in annotationViews {
-                    view.alpha = 0.0
-                }
-                UIView.animate(withDuration: 1.2, animations: {
-                    for view in annotationViews {
-                        view.alpha = 1.0
-                    }
-                })
-            }
-        }.addDisposableTo(disposeBag)
+        let annotation2 = MKPointAnnotation()
+        annotation2.title = "title2"
+        annotation2.subtitle = "subtitle2"
+        annotation2.coordinate = CLLocationCoordinate2D(latitude: 1, longitude: 1)
+        
+        let annotations = [annotation1, annotation2]
+        
+        _ = Observable.from(annotations)
+            .bind(to: mapView.rx.annotations)
+
+        _ = Observable.from(annotations)
+            .subscribe(onNext: {self.mapView.addAnnotation($0)})
+        
+//        annotationSubscription = mapView.rx.regionDidChangeAnimated
+//            .map { _ in self.getVisibleRegion(mapView: self.mapView ) }
+//            .map { region -> [MKPointAnnotation] in
+//                // Load annotations in given region.
+//                return self.cityMap.tiles(atRegion: region).flatMap { $0 }
+//            }.bind(to: mapView.rx.annotations)
+//        
+//        // Animate new annotations
+//        mapView.rx.didAddAnnotationViews
+//        .subscribe { event in
+//            if case .next(let annotationViews) = event {
+//                for view in annotationViews {
+//                    view.alpha = 0.0
+//                }
+//                UIView.animate(withDuration: 1.2, animations: {
+//                    for view in annotationViews {
+//                        view.alpha = 1.0
+//                    }
+//                })
+//            }
+//        }.addDisposableTo(disposeBag)
     }
 }
 
@@ -193,93 +211,4 @@ func loadCities() -> [MKPointAnnotation] {
     }
     
     return []
-}
-
-public protocol RxMapViewDataSourceType {
-    
-    /// Type of elements that can be bound to table view.
-    associatedtype Element
-    
-    /// New observable sequence event observed.
-    ///
-    /// - parameter mapView: Bound map view.
-    /// - parameter observedEvent: Event
-    func mapView(_ mapView: MKMapView, observedEvent: Event<[Element]>) -> Void
-}
-
-extension Reactive where Base: MKMapView {
-    
-    public func annotations<O: ObservableType>
-        (_ source: O)
-        -> Disposable
-        where O.E == [MKAnnotation] {
-            let dataSource = RxMapViewReactiveDataSource()
-            return self.annotations(dataSource: dataSource)(source)
-    }
-    
-    public func annotations<
-        DataSource: RxMapViewDataSourceType,
-        O: ObservableType>
-        (dataSource: DataSource)
-        -> (_ source: O)
-        -> Disposable
-        where O.E == [DataSource.Element],
-        DataSource.Element: MKAnnotation {
-            return { source in
-                return source
-                    .subscribe({ event in
-                        dataSource.mapView(self.base, observedEvent: event)
-                    })
-            }
-    }
-
-    public func annotations<O: ObservableType>
-        (fadeDuration: TimeInterval)
-        -> (_ source: O)
-        -> Disposable
-        where O.E == [MKAnnotation] {
-            return { source in
-                let dataSource = RxMapViewAnimatedDataSource(mapView: self.base, animationDuration: fadeDuration)
-                return self.annotations(dataSource: dataSource)(source)
-            }
-    }
-}
-
-extension MKAnnotation {
-    func isSame(as another: MKAnnotation) -> Bool {
-        return another.coordinate.latitude == self.coordinate.latitude
-            && another.coordinate.longitude == self.coordinate.longitude
-    }
-}
-
-public struct AnnotationDiff {
-    let removed: [MKAnnotation]
-    let added: [MKAnnotation]
-}
-
-func differencesForAnnotations(a: [MKAnnotation], b: [MKAnnotation]) -> AnnotationDiff {
-    
-    // TODO: Could be improved in performance.
-    var remainingItems = Array(b)
-    var removedItems = [MKAnnotation]()
-    
-    // Check the existing ones first.
-    for item in a {
-        if let index = remainingItems.index(where: item.isSame(as:)) {
-            // The item exists still.
-            remainingItems.remove(at: index)
-        } else {
-            // The item doesn't exist, remove it.
-            removedItems.append(item)
-        }
-    }
-    
-    // Remaining visible indices should be new.
-    let newItems = remainingItems
-    
-    return AnnotationDiff(removed: removedItems, added: newItems)
-}
-
-private func areTheSame(_ annotations: [MKAnnotation], _ views: [MKAnnotationView]) -> Bool {
-    return !annotations.contains(where: { $0 === views.first?.annotation})
 }
