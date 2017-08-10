@@ -61,52 +61,12 @@ class ViewController: UIViewController {
             self.cityMap[mapIndex] = tile
         }
         
-//        annotationSubscription = mapView.rx.regionDidChangeAnimated
-//            .map { _ in self.getVisibleRegion(mapView: self.mapView ) }
-//            .map { region -> [MKAnnotation] in
-//                // Load annotations in given region.
-//                return self.cityMap.tiles(atRegion: region).flatMap { $0 }
-//            }.bind(to: mapView.rx.annotationsx(dataSource: RxMapViewFadeInOutDataSource()))
-        
-        let annotation1 = MKPointAnnotation()
-        annotation1.title = "title1"
-        annotation1.subtitle = "subtitle1"
-        annotation1.coordinate = CLLocationCoordinate2D(latitude: 0.1, longitude: 0.1)
-        
-        let annotation2 = MKPointAnnotation()
-        annotation2.title = "title2"
-        annotation2.subtitle = "subtitle2"
-        annotation2.coordinate = CLLocationCoordinate2D(latitude: 1, longitude: 1)
-        
-        let annotations = [annotation1, annotation2]
-        
-        _ = Observable.from(annotations)
-            .bind(to: mapView.rx.annotations)
-
-        _ = Observable.from(annotations)
-            .subscribe(onNext: {self.mapView.addAnnotation($0)})
-        
-//        annotationSubscription = mapView.rx.regionDidChangeAnimated
-//            .map { _ in self.getVisibleRegion(mapView: self.mapView ) }
-//            .map { region -> [MKPointAnnotation] in
-//                // Load annotations in given region.
-//                return self.cityMap.tiles(atRegion: region).flatMap { $0 }
-//            }.bind(to: mapView.rx.annotations)
-//        
-//        // Animate new annotations
-//        mapView.rx.didAddAnnotationViews
-//        .subscribe { event in
-//            if case .next(let annotationViews) = event {
-//                for view in annotationViews {
-//                    view.alpha = 0.0
-//                }
-//                UIView.animate(withDuration: 1.2, animations: {
-//                    for view in annotationViews {
-//                        view.alpha = 1.0
-//                    }
-//                })
-//            }
-//        }.addDisposableTo(disposeBag)
+        annotationSubscription = mapView.rx.regionDidChangeAnimated
+            .map { _ in self.getVisibleRegion(mapView: self.mapView ) }
+            .map { region -> [MKAnnotation] in
+                // Load annotations in given region.
+                return self.cityMap.tiles(atRegion: region).flatMap { $0 }
+            }.bind(to: mapView.rx.annotations(dataSource: RxMapViewReactiveDataSource()))
     }
 }
 
@@ -115,12 +75,12 @@ extension ViewController: MKMapViewDelegate {
     func getVisibleRegion(mapView: MKMapView) -> MKCoordinateRegion {
         return mapView.zoomLevel > 13
             ? MKCoordinateRegion()
-//            : mapView.region
-            : MKCoordinateRegion(
-                center: mapView.region.center,
-                span: MKCoordinateSpan(
-                    latitudeDelta: mapView.region.span.latitudeDelta / 2.0,
-                    longitudeDelta: mapView.region.span.longitudeDelta / 2.0))
+            : mapView.region
+//            : MKCoordinateRegion(
+//                center: mapView.region.center,
+//                span: MKCoordinateSpan(
+//                    latitudeDelta: mapView.region.span.latitudeDelta / 2.0,
+//                    longitudeDelta: mapView.region.span.longitudeDelta / 2.0))
     }
     
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {

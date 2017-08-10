@@ -73,38 +73,3 @@ public class RxMapViewAnimatedDataSource: RxMapViewDataSourceType {
         })
     }
 }
-
-extension MKAnnotation {
-    func isSame(as another: MKAnnotation) -> Bool {
-        return another.coordinate.latitude == self.coordinate.latitude
-            && another.coordinate.longitude == self.coordinate.longitude
-    }
-}
-
-public struct AnnotationDiff {
-    let removed: [MKAnnotation]
-    let added: [MKAnnotation]
-}
-
-func differencesForAnnotations(a: [MKAnnotation], b: [MKAnnotation]) -> AnnotationDiff {
-    
-    // TODO: Could be improved in performance.
-    var remainingItems = Array(b)
-    var removedItems = [MKAnnotation]()
-    
-    // Check the existing ones first.
-    for item in a {
-        if let index = remainingItems.index(where: item.isSame(as:)) {
-            // The item exists still.
-            remainingItems.remove(at: index)
-        } else {
-            // The item doesn't exist, remove it.
-            removedItems.append(item)
-        }
-    }
-    
-    // Remaining visible indices should be new.
-    let newItems = remainingItems
-    
-    return AnnotationDiff(removed: removedItems, added: newItems)
-}
