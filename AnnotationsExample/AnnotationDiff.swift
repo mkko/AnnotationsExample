@@ -1,40 +1,43 @@
 //
 //  AnnotationDiff.swift
-//  AnnotationsExample
+//  RxMKMapView
 //
-//  Created by Mikko Välimäki on 10/08/2017.
-//  Copyright © 2017 Mikko Välimäki. All rights reserved.
+//  Created by Mikko Välimäki on 08/08/2017.
+//  Copyright © 2017 RxSwiftCommunity. All rights reserved.
 //
 
 import Foundation
 import MapKit
-import RxSwift
-import RxCocoa
 
-public struct AnnotationDiff {
+public struct Diff {
+    
     let removed: [MKAnnotation]
     let added: [MKAnnotation]
 }
 
-func differencesForAnnotations(a: [MKAnnotation], b: [MKAnnotation]) -> AnnotationDiff {
-    
-    // TODO: Could be improved in performance.
-    var remainingItems = Array(b)
-    var removedItems = [MKAnnotation]()
-    
-    // Check the existing ones first.
-    for item in a {
-        if let index = remainingItems.index(where: { item === $0 }) {
-            // The item exists still.
-            remainingItems.remove(at: index)
-        } else {
-            // The item doesn't exist, remove it.
-            removedItems.append(item)
+public extension Diff {
+
+    static func calculateFrom(previous: [MKAnnotation], next: [MKAnnotation]) -> Diff {
+        
+        // TODO: Could be improved in performance.
+        var remainingItems = Array(next)
+        var removedItems = [MKAnnotation]()
+        
+        // Check the existing ones first.
+        for item in previous {
+            if let index = remainingItems.index(where: { item === $0 }) {
+                // The item exists still.
+                remainingItems.remove(at: index)
+            } else {
+                // The item doesn't exist, remove it.
+                removedItems.append(item)
+            }
         }
+        
+        // Remaining visible indices should be new.
+        let newItems = remainingItems
+        
+        return Diff(removed: removedItems, added: newItems)
     }
-    
-    // Remaining visible indices should be new.
-    let newItems = remainingItems
-    
-    return AnnotationDiff(removed: removedItems, added: newItems)
+
 }
