@@ -13,44 +13,16 @@ import RxMKMapView
 import RxSwift
 import RxCocoa
 
-//class City: MKPointAnnotation {
-//    
-////    let coordinate: CLLocationCoordinate2D
-////    
-////    let title: String?
-////    
-////    var subtitle: String? { return "Population \(population)" }
-//    
-//    let population: Double
-//    
-//    init(title: String, coordinate: CLLocationCoordinate2D, population: Double) {
-//        self.title = title
-//        self.coordinate = coordinate
-//        self.population = population
-//    }
-//}
-
-struct Tile {
-    let cities: [MKPointAnnotation]
-    let overlay: MKOverlay
-}
-
 class ViewController: UIViewController {
     
     @IBOutlet weak var mapView: MKMapView!
-    
-    var regionOverlay = MKPolygon(region: MKCoordinateRegion())
-    
+        
     let queue = DispatchQueue(label: "com.mikkovalimaki.MapUpdateQueue")
-    
-    var grid = MapGrid<Tile>(tileSize: 100000 /* meters */)
     
     var cityMap = MapGrid<[MKPointAnnotation]>(tileSize: 5000)
     
     private var annotationSubscription: Disposable! = nil
     
-    private let disposeBag = DisposeBag()
-
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -102,34 +74,6 @@ extension ViewController: MKMapViewDelegate {
             //pinView!.animatesDrop = true
         }
         return pinView
-    }
-}
-
-extension MKCoordinateRegion {
-    
-    var bounds: (nw: CLLocationCoordinate2D, ne: CLLocationCoordinate2D, se: CLLocationCoordinate2D, sw: CLLocationCoordinate2D) {
-        let nw = CLLocationCoordinate2D(
-            latitude: self.center.latitude + self.span.latitudeDelta / 2.0,
-            longitude: self.center.longitude - self.span.longitudeDelta / 2.0)
-        let ne = CLLocationCoordinate2D(
-            latitude: self.center.latitude + self.span.latitudeDelta / 2.0,
-            longitude: self.center.longitude + self.span.longitudeDelta / 2.0)
-        let se = CLLocationCoordinate2D(
-            latitude: self.center.latitude - self.span.latitudeDelta / 2.0,
-            longitude: self.center.longitude + self.span.longitudeDelta / 2.0)
-        let sw = CLLocationCoordinate2D(
-            latitude: self.center.latitude - self.span.latitudeDelta / 2.0,
-            longitude: self.center.longitude - self.span.longitudeDelta / 2.0)
-        return (nw, ne, se, sw)
-    }
-}
-
-extension MKPolygon {
-    
-    convenience init(region: MKCoordinateRegion) {
-        let bounds = region.bounds
-        var coordinates = [bounds.nw, bounds.ne, bounds.se, bounds.sw]
-        self.init(coordinates: &coordinates, count: coordinates.count)
     }
 }
 
