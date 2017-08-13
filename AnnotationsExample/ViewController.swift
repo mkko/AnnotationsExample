@@ -13,25 +13,25 @@ import RxMKMapView
 import RxSwift
 import RxCocoa
 
-class City: NSObject, MKAnnotation {
-    
-    let coordinate: CLLocationCoordinate2D
-    
-    let title: String?
-    
-    var subtitle: String? { return "Population \(population)" }
-    
-    let population: Double
-    
-    init(title: String, coordinate: CLLocationCoordinate2D, population: Double) {
-        self.title = title
-        self.coordinate = coordinate
-        self.population = population
-    }
-}
+//class City: MKPointAnnotation {
+//    
+////    let coordinate: CLLocationCoordinate2D
+////    
+////    let title: String?
+////    
+////    var subtitle: String? { return "Population \(population)" }
+//    
+//    let population: Double
+//    
+//    init(title: String, coordinate: CLLocationCoordinate2D, population: Double) {
+//        self.title = title
+//        self.coordinate = coordinate
+//        self.population = population
+//    }
+//}
 
 struct Tile {
-    let cities: [City]
+    let cities: [MKPointAnnotation]
     let overlay: MKOverlay
 }
 
@@ -45,36 +45,28 @@ class ViewController: UIViewController {
     
     var grid = MapGrid<Tile>(tileSize: 100000 /* meters */)
     
-    var cityMap = MapGrid<[City]>(tileSize: 5000)
+    var cityMap = MapGrid<[MKPointAnnotation]>(tileSize: 5000)
     
     private var annotationSubscription: Disposable! = nil
+    
+    private let disposeBag = DisposeBag()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
         for city in loadCities() {
             let mapIndex = self.cityMap.indexForCoordinate(city.coordinate)
-            var tile = self.cityMap[mapIndex] ?? [City]()
+            var tile = self.cityMap[mapIndex] ?? [MKPointAnnotation]()
             tile.append(city)
             self.cityMap[mapIndex] = tile
         }
-        
-//        let x = UILabel()
-//        x.rx.text
-        
-        //let annotations = mapView.rxAnnotations.configure()
-
-//        let x = self.annotationsx2(handler: { diff in
-//            self.base.removeAnnotations(diff.removed)
-//            self.base.addAnnotations(diff.added)
-//        })
         
         annotationSubscription = mapView.rx.regionDidChangeAnimated
             .map { _ in self.getVisibleRegion(mapView: self.mapView ) }
             .map { region -> [MKAnnotation] in
                 // Load annotations in given region.
                 return self.cityMap.tiles(atRegion: region).flatMap { $0 }
-            }.bind(to: mapView.rx.annotationsx2(animation: .fadeInFadeOut))
+            }.bind(to: mapView.rx.annotations)
     }
 }
 
@@ -83,12 +75,12 @@ extension ViewController: MKMapViewDelegate {
     func getVisibleRegion(mapView: MKMapView) -> MKCoordinateRegion {
         return mapView.zoomLevel > 13
             ? MKCoordinateRegion()
-//            : mapView.region
-            : MKCoordinateRegion(
-                center: mapView.region.center,
-                span: MKCoordinateSpan(
-                    latitudeDelta: mapView.region.span.latitudeDelta / 2.0,
-                    longitudeDelta: mapView.region.span.longitudeDelta / 2.0))
+            : mapView.region
+//            : MKCoordinateRegion(
+//                center: mapView.region.center,
+//                span: MKCoordinateSpan(
+//                    latitudeDelta: mapView.region.span.latitudeDelta / 2.0,
+//                    longitudeDelta: mapView.region.span.longitudeDelta / 2.0))
     }
     
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
@@ -148,13 +140,13 @@ extension MKMapView {
     }
 }
 
-func loadCities() -> [City] {
+func loadCities() -> [MKPointAnnotation] {
     if let path = Bundle.main.path(forResource: "simplemaps-worldcities-basic", ofType: "csv") {
         // Just read the whole chunk, it should be small enough for the example.
         do {
             let data = try String(contentsOfFile: path, encoding: .utf8)
             let lines = data.components(separatedBy: .newlines)
-            let cities = lines.flatMap { line -> City? in
+            let cities = lines.flatMap { line -> MKPointAnnotation? in
                 let csv = line.components(separatedBy: ",")
                 guard csv.count > 3,
                     let lat = Double(csv[2]),
@@ -165,7 +157,11 @@ func loadCities() -> [City] {
                 }
                 let name = csv[0]
                 let coord = CLLocationCoordinate2D(latitude: lat, longitude: lon)
-                return City(title: name, coordinate: coord, population: pop)
+                let a = MKPointAnnotation()//(title: name, coordinate: coord, population: pop)
+                a.title = name
+                a.coordinate = coord
+                a.subtitle = "Population \(pop)"
+                return a
             }
             return cities
         } catch {
@@ -176,154 +172,3 @@ func loadCities() -> [City] {
     
     return []
 }
-
-public enum AnnotationAnimationType {
-    case noAnimation
-    case fadeInFadeOut
-    //case custom(MKMapView, AnnotationDiff)
-    
-    func act(mapView: MKMapView, diff: AnnotationDiff) {
-        switch self {
-        case .noAnimation:
-            mapView.removeAnnotations(diff.removed)
-            mapView.addAnnotations(diff.added)
-        case .fadeInFadeOut:
-            mapView.removeAnnotations(diff.removed, animated: true)
-            mapView.addAnnotations(diff.added, animated: true)
-        }
-    }
-}
-
-public struct AnnotationDiff {
-    let removed: [MKAnnotation]
-    let added: [MKAnnotation]
-}
-
-extension Reactive where Base: MKMapView {
-    
-//    public func annotationsx<O: ObservableType> (_ source: O)
-//        -> Disposable where O.E == [MKAnnotation] {
-//            let x = self.annotationsx2(handler: { diff in
-//                self.base.removeAnnotations(diff.removed)
-//                self.base.addAnnotations(diff.added)
-//            })
-//            return x
-//    }
-
-    public func annotationsx2<O: ObservableType>(animation: AnnotationAnimationType = .noAnimation) -> (_ source: O)
-        -> Disposable where O.E == [MKAnnotation] {
-            return { source in
-                let shared = source.share()
-                return Observable
-                    .zip(shared.startWith([]), shared) { ($0, $1) }
-                    .subscribe(AnyObserver { event in
-                        if case let .next(element) = event {
-                            let diff = self.diff(a: element.0, b: element.1)
-                            //print("diff: \(diff)")
-                            animation.act(mapView: self.base, diff: diff)
-                        }
-                    })
-            }
-    }
-    
-    
-    func diff(a: [MKAnnotation], b: [MKAnnotation]) -> AnnotationDiff {
-        
-        // TODO: Could be improved in performance.
-        var remainingItems = Array(b) //Set<BoxedAnnotation>(b.map(BoxedAnnotation))
-        //var existingItems = [MKAnnotation]()
-        var removedItems = [MKAnnotation]()
-        
-        // Check the existing ones first.
-        for item in a {
-            if let index = remainingItems.index(where: item.isSame(as:)) {
-                // The item exists still.
-                remainingItems.remove(at: index)
-                //existingItems.append(item)
-            } else {
-                // The item doesn't exist, remove it.
-                removedItems.append(item)
-            }
-        }
-        
-        // Remaining visible indices should be new.
-        let newItems = remainingItems
-        
-        return AnnotationDiff(removed: removedItems, added: newItems)
-    }
-}
-
-extension MKAnnotation {
-    func isSame(as another: MKAnnotation) -> Bool {
-        return another.coordinate.latitude == self.coordinate.latitude
-            && another.coordinate.longitude == self.coordinate.longitude
-    }
-}
-
-extension MKMapView {
-    
-    func removeAnnotations(_ annotations: [MKAnnotation], animated: Bool) {
-        if animated {
-            UIView.animate(withDuration: 0.2, animations: {
-                for view in annotations.flatMap(self.view(for:)) {
-                    view.alpha = 0.0
-                }
-            }, completion: { _ in
-                self.removeAnnotations(annotations)
-            })
-        } else {
-            self.removeAnnotations(annotations)
-        }
-    }
-
-    func addAnnotations(_ annotations: [MKAnnotation], animated: Bool) {
-        if animated {
-            
-            self.addAnnotations(annotations) { views in
-//                print("\(views)")
-                for view in views {
-                    view.alpha = 0.0
-                }
-                UIView.animate(withDuration: 1.2, animations: {
-                    for view in views {
-                        view.alpha = 1.0
-                    }
-                })
-            }
-        } else {
-            self.addAnnotations(annotations)
-        }
-    }
-    
-    func addAnnotations(_ annotations: [MKAnnotation], callback: @escaping ([MKAnnotationView]) -> ()) {
-        let _ = self.rx.didAddAnnotationViews
-            .filter { views in
-                !annotations.contains(where: { $0 === views.first?.annotation})
-            }
-            .take(1)
-            .subscribe { event in
-                switch event {
-                case .next(let e):
-                    callback(e)
-                default:
-                    break
-                }
-        }
-        self.addAnnotations(annotations)
-    }
-}
-
-//extension MKMapView {
-//    
-//    public var text: RxCocoa.UIBindingObserver<Base, String?> {
-//        return UIBindingObserver(UIElement: self.base) { label, text in
-//            label.text = text
-//        }
-//    }
-//
-//    public var rxAnnotations: RxCocoa.RxCocoa.UIBindingObserver<Base, [MKAnnoation]?> {
-//        return UIBindingObserver(UIElement: self.base) { label, text in
-//            label.text = text
-//        }
-//    }
-//}
