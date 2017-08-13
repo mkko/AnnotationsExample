@@ -66,7 +66,7 @@ class ViewController: UIViewController {
             .map { region -> [MKAnnotation] in
                 // Load annotations in given region.
                 return self.cityMap.tiles(atRegion: region).flatMap { $0 }
-            }.bind(to: mapView.rx.annotations(dataSource: RxMapViewReactiveDataSource()))
+            }.bind(to: mapView.rx.annotations)
     }
 }
 

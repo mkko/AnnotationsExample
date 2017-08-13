@@ -9,19 +9,19 @@
 import Foundation
 import MapKit
 
-public struct Diff {
+public struct Diff<T: AnyObject> {
     
-    let removed: [MKAnnotation]
-    let added: [MKAnnotation]
+    let removed: [T]
+    let added: [T]
 }
 
 public extension Diff {
 
-    static func calculateFrom(previous: [MKAnnotation], next: [MKAnnotation]) -> Diff {
+    static func calculateFrom(previous: [T], next: [T]) -> Diff<T> {
         
         // TODO: Could be improved in performance.
         var remainingItems = Array(next)
-        var removedItems = [MKAnnotation]()
+        var removedItems = [T]()
         
         // Check the existing ones first.
         for item in previous {

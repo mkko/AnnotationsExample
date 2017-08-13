@@ -38,14 +38,16 @@ public class RxMapViewAnimatedDataSource: RxMapViewDataSourceType {
         UIBindingObserver(UIElement: self) { (dataSource, newAnnotations) in
             DispatchQueue.main.async {
                 
-                let diff = differencesForAnnotations(a: self.currentAnnotations, b: newAnnotations)
+                let diff = Diff.calculateFrom(
+                    previous: self.currentAnnotations,
+                    next: newAnnotations)
                 self.currentAnnotations = newAnnotations
                 
                 // The subscription is used to animate new annotations. The removal can be animated in place.
                 self.removeAnnotations(diff.removed, mapView: mapView, animationDuration: self.duration)
                 mapView.addAnnotations(diff.added)
             }
-            }.on(observedEvent)
+        }.on(observedEvent)
     }
     
     private func shouldAnimate(annotation: MKAnnotationView) -> Bool {

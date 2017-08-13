@@ -10,7 +10,7 @@
 		2B70B84A1F3AFCDF0036CB3C /* RxMapViewReactiveDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B70B8491F3AFCDF0036CB3C /* RxMapViewReactiveDataSource.swift */; };
 		2B70B84C1F3AFD350036CB3C /* RxMapViewAnimatedDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B70B84B1F3AFD350036CB3C /* RxMapViewAnimatedDataSource.swift */; };
 		2B70B84E1F3B2B850036CB3C /* MKMapView+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B70B84D1F3B2B850036CB3C /* MKMapView+Rx.swift */; };
-		2B70B8501F3C7EB70036CB3C /* AnnotationDiff.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B70B84F1F3C7EB70036CB3C /* AnnotationDiff.swift */; };
+		2B70B8501F3C7EB70036CB3C /* Diff.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B70B84F1F3C7EB70036CB3C /* Diff.swift */; };
 		2B9269A71F24A6EA00240ABC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9269A61F24A6EA00240ABC /* AppDelegate.swift */; };
 		2B9269A91F24A6EA00240ABC /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9269A81F24A6EA00240ABC /* ViewController.swift */; };
 		2B9269AC1F24A6EA00240ABC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2B9269AA1F24A6EA00240ABC /* Main.storyboard */; };
@@ -59,7 +59,7 @@
 		2B70B8491F3AFCDF0036CB3C /* RxMapViewReactiveDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RxMapViewReactiveDataSource.swift; sourceTree = "<group>"; };
 		2B70B84B1F3AFD350036CB3C /* RxMapViewAnimatedDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RxMapViewAnimatedDataSource.swift; sourceTree = "<group>"; };
 		2B70B84D1F3B2B850036CB3C /* MKMapView+Rx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MKMapView+Rx.swift"; sourceTree = "<group>"; };
-		2B70B84F1F3C7EB70036CB3C /* AnnotationDiff.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnnotationDiff.swift; sourceTree = "<group>"; };
+		2B70B84F1F3C7EB70036CB3C /* Diff.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Diff.swift; sourceTree = "<group>"; };
 		2B9269A31F24A6EA00240ABC /* AnnotationsExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AnnotationsExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2B9269A61F24A6EA00240ABC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2B9269A81F24A6EA00240ABC /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -131,7 +131,7 @@
 				2B70B84D1F3B2B850036CB3C /* MKMapView+Rx.swift */,
 				2B70B8491F3AFCDF0036CB3C /* RxMapViewReactiveDataSource.swift */,
 				2B70B84B1F3AFD350036CB3C /* RxMapViewAnimatedDataSource.swift */,
-				2B70B84F1F3C7EB70036CB3C /* AnnotationDiff.swift */,
+				2B70B84F1F3C7EB70036CB3C /* Diff.swift */,
 			);
 			path = AnnotationsExample;
 			sourceTree = "<group>";
@@ -289,7 +289,7 @@
 				2B9269A91F24A6EA00240ABC /* ViewController.swift in Sources */,
 				2B9269A71F24A6EA00240ABC /* AppDelegate.swift in Sources */,
 				2B70B84A1F3AFCDF0036CB3C /* RxMapViewReactiveDataSource.swift in Sources */,
-				2B70B8501F3C7EB70036CB3C /* AnnotationDiff.swift in Sources */,
+				2B70B8501F3C7EB70036CB3C /* Diff.swift in Sources */,
 				2B70B84C1F3AFD350036CB3C /* RxMapViewAnimatedDataSource.swift in Sources */,
 				2B70B84E1F3B2B850036CB3C /* MKMapView+Rx.swift in Sources */,
 			);
