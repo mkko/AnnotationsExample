@@ -7,10 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2B70B84A1F3AFCDF0036CB3C /* RxMapViewReactiveDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B70B8491F3AFCDF0036CB3C /* RxMapViewReactiveDataSource.swift */; };
-		2B70B84C1F3AFD350036CB3C /* RxMapViewAnimatedDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B70B84B1F3AFD350036CB3C /* RxMapViewAnimatedDataSource.swift */; };
-		2B70B84E1F3B2B850036CB3C /* MKMapView+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B70B84D1F3B2B850036CB3C /* MKMapView+Rx.swift */; };
-		2B70B8501F3C7EB70036CB3C /* Diff.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B70B84F1F3C7EB70036CB3C /* Diff.swift */; };
+		2B70B8561F404EC60036CB3C /* RxMapViewAnimatedDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B70B84B1F3AFD350036CB3C /* RxMapViewAnimatedDataSource.swift */; };
+		2B70B8601F40525E0036CB3C /* RxMKMapView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B70B85E1F40524A0036CB3C /* RxMKMapView.framework */; };
+		2B70B8611F40525E0036CB3C /* RxMKMapView.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2B70B85E1F40524A0036CB3C /* RxMKMapView.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		2B70B8621F40525E0036CB3C /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B70B85A1F40523C0036CB3C /* RxCocoa.framework */; };
+		2B70B8631F40525E0036CB3C /* RxCocoa.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2B70B85A1F40523C0036CB3C /* RxCocoa.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		2B70B8641F40525E0036CB3C /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B70B85B1F40523C0036CB3C /* RxSwift.framework */; };
+		2B70B8651F40525E0036CB3C /* RxSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2B70B85B1F40523C0036CB3C /* RxSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		2B70B8661F40525E0036CB3C /* MapGrid.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B70B8581F4052300036CB3C /* MapGrid.framework */; };
+		2B70B8671F40525E0036CB3C /* MapGrid.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2B70B8581F4052300036CB3C /* MapGrid.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		2B9269A71F24A6EA00240ABC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9269A61F24A6EA00240ABC /* AppDelegate.swift */; };
 		2B9269A91F24A6EA00240ABC /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9269A81F24A6EA00240ABC /* ViewController.swift */; };
 		2B9269AC1F24A6EA00240ABC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2B9269AA1F24A6EA00240ABC /* Main.storyboard */; };
@@ -18,14 +23,6 @@
 		2B9269B11F24A6EA00240ABC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2B9269AF1F24A6EA00240ABC /* LaunchScreen.storyboard */; };
 		2B9269BC1F24A6EA00240ABC /* AnnotationsExampleUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9269BB1F24A6EA00240ABC /* AnnotationsExampleUITests.swift */; };
 		2B9269C71F24A8F200240ABC /* simplemaps-worldcities-basic.csv in Resources */ = {isa = PBXBuildFile; fileRef = 2B9269C61F24A8F200240ABC /* simplemaps-worldcities-basic.csv */; };
-		2BEC030E1F2538D6007B9036 /* RxMKMapView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BEC02C11F24B996007B9036 /* RxMKMapView.framework */; };
-		2BEC030F1F2538D6007B9036 /* RxMKMapView.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2BEC02C11F24B996007B9036 /* RxMKMapView.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		2BEC03101F2538D6007B9036 /* MapGrid.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BEC02C21F24B996007B9036 /* MapGrid.framework */; };
-		2BEC03111F2538D6007B9036 /* MapGrid.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2BEC02C21F24B996007B9036 /* MapGrid.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		2BEC03121F2538D6007B9036 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BEC02C31F24B996007B9036 /* RxCocoa.framework */; };
-		2BEC03131F2538D6007B9036 /* RxCocoa.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2BEC02C31F24B996007B9036 /* RxCocoa.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		2BEC03141F2538D6007B9036 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BEC02C41F24B996007B9036 /* RxSwift.framework */; };
-		2BEC03151F2538D6007B9036 /* RxSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2BEC02C41F24B996007B9036 /* RxSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,16 +36,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		2BEC03161F2538D6007B9036 /* Embed Frameworks */ = {
+		2B70B8681F40525E0036CB3C /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				2BEC03151F2538D6007B9036 /* RxSwift.framework in Embed Frameworks */,
-				2BEC03131F2538D6007B9036 /* RxCocoa.framework in Embed Frameworks */,
-				2BEC030F1F2538D6007B9036 /* RxMKMapView.framework in Embed Frameworks */,
-				2BEC03111F2538D6007B9036 /* MapGrid.framework in Embed Frameworks */,
+				2B70B8631F40525E0036CB3C /* RxCocoa.framework in Embed Frameworks */,
+				2B70B8671F40525E0036CB3C /* MapGrid.framework in Embed Frameworks */,
+				2B70B8611F40525E0036CB3C /* RxMKMapView.framework in Embed Frameworks */,
+				2B70B8651F40525E0036CB3C /* RxSwift.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -56,10 +53,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		2B70B8491F3AFCDF0036CB3C /* RxMapViewReactiveDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RxMapViewReactiveDataSource.swift; sourceTree = "<group>"; };
 		2B70B84B1F3AFD350036CB3C /* RxMapViewAnimatedDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RxMapViewAnimatedDataSource.swift; sourceTree = "<group>"; };
-		2B70B84D1F3B2B850036CB3C /* MKMapView+Rx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MKMapView+Rx.swift"; sourceTree = "<group>"; };
-		2B70B84F1F3C7EB70036CB3C /* Diff.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Diff.swift; sourceTree = "<group>"; };
+		2B70B8581F4052300036CB3C /* MapGrid.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapGrid.framework; path = Carthage/Build/iOS/MapGrid.framework; sourceTree = "<group>"; };
+		2B70B85A1F40523C0036CB3C /* RxCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxCocoa.framework; path = Carthage/Build/iOS/RxCocoa.framework; sourceTree = "<group>"; };
+		2B70B85B1F40523C0036CB3C /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxSwift.framework; path = Carthage/Build/iOS/RxSwift.framework; sourceTree = "<group>"; };
+		2B70B85E1F40524A0036CB3C /* RxMKMapView.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxMKMapView.framework; path = Carthage/Build/iOS/RxMKMapView.framework; sourceTree = "<group>"; };
 		2B9269A31F24A6EA00240ABC /* AnnotationsExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AnnotationsExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2B9269A61F24A6EA00240ABC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2B9269A81F24A6EA00240ABC /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -82,10 +80,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2BEC03141F2538D6007B9036 /* RxSwift.framework in Frameworks */,
-				2BEC03121F2538D6007B9036 /* RxCocoa.framework in Frameworks */,
-				2BEC030E1F2538D6007B9036 /* RxMKMapView.framework in Frameworks */,
-				2BEC03101F2538D6007B9036 /* MapGrid.framework in Frameworks */,
+				2B70B8621F40525E0036CB3C /* RxCocoa.framework in Frameworks */,
+				2B70B8661F40525E0036CB3C /* MapGrid.framework in Frameworks */,
+				2B70B8601F40525E0036CB3C /* RxMKMapView.framework in Frameworks */,
+				2B70B8641F40525E0036CB3C /* RxSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -99,6 +97,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2B70B8571F4052300036CB3C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2B70B85E1F40524A0036CB3C /* RxMKMapView.framework */,
+				2B70B85A1F40523C0036CB3C /* RxCocoa.framework */,
+				2B70B85B1F40523C0036CB3C /* RxSwift.framework */,
+				2B70B8581F4052300036CB3C /* MapGrid.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		2B92699A1F24A6EA00240ABC = {
 			isa = PBXGroup;
 			children = (
@@ -106,6 +115,7 @@
 				2B9269BA1F24A6EA00240ABC /* AnnotationsExampleUITests */,
 				2BEC02C91F24B99B007B9036 /* Dependencies */,
 				2B9269A41F24A6EA00240ABC /* Products */,
+				2B70B8571F4052300036CB3C /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -123,15 +133,12 @@
 			children = (
 				2B9269A61F24A6EA00240ABC /* AppDelegate.swift */,
 				2B9269A81F24A6EA00240ABC /* ViewController.swift */,
+				2B70B84B1F3AFD350036CB3C /* RxMapViewAnimatedDataSource.swift */,
 				2B9269AA1F24A6EA00240ABC /* Main.storyboard */,
 				2B9269C61F24A8F200240ABC /* simplemaps-worldcities-basic.csv */,
 				2B9269AD1F24A6EA00240ABC /* Assets.xcassets */,
 				2B9269AF1F24A6EA00240ABC /* LaunchScreen.storyboard */,
 				2B9269B21F24A6EA00240ABC /* Info.plist */,
-				2B70B84D1F3B2B850036CB3C /* MKMapView+Rx.swift */,
-				2B70B8491F3AFCDF0036CB3C /* RxMapViewReactiveDataSource.swift */,
-				2B70B84B1F3AFD350036CB3C /* RxMapViewAnimatedDataSource.swift */,
-				2B70B84F1F3C7EB70036CB3C /* Diff.swift */,
 			);
 			path = AnnotationsExample;
 			sourceTree = "<group>";
@@ -168,7 +175,7 @@
 				2B9269A01F24A6EA00240ABC /* Frameworks */,
 				2B9269A11F24A6EA00240ABC /* Resources */,
 				2BEC02C01F24B8BF007B9036 /* Carthage Copy Frameworks */,
-				2BEC03161F2538D6007B9036 /* Embed Frameworks */,
+				2B70B8681F40525E0036CB3C /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -287,11 +294,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				2B9269A91F24A6EA00240ABC /* ViewController.swift in Sources */,
+				2B70B8561F404EC60036CB3C /* RxMapViewAnimatedDataSource.swift in Sources */,
 				2B9269A71F24A6EA00240ABC /* AppDelegate.swift in Sources */,
-				2B70B84A1F3AFCDF0036CB3C /* RxMapViewReactiveDataSource.swift in Sources */,
-				2B70B8501F3C7EB70036CB3C /* Diff.swift in Sources */,
-				2B70B84C1F3AFD350036CB3C /* RxMapViewAnimatedDataSource.swift in Sources */,
-				2B70B84E1F3B2B850036CB3C /* MKMapView+Rx.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -436,6 +440,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/AnnotationsExample",
 					"$(SRCROOT)/Carthage/Build/iOS",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				INFOPLIST_FILE = AnnotationsExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -453,6 +458,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/AnnotationsExample",
 					"$(SRCROOT)/Carthage/Build/iOS",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				INFOPLIST_FILE = AnnotationsExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

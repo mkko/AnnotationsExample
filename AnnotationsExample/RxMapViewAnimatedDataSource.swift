@@ -10,6 +10,7 @@ import Foundation
 import MapKit
 import RxSwift
 import RxCocoa
+import RxMKMapView
 
 let defaultDuration: TimeInterval = 0.2
 

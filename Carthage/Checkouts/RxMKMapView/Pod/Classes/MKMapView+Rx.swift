@@ -229,85 +229,28 @@ extension Reactive where Base : MKMapView {
     
     // MARK: Binding annotation to the Map
     
-    public func annotations<S: Sequence, O: ObservableType> (_ source: O)
-        -> (_ transform: @escaping (S.Iterator.Element) -> MKAnnotation)
-        -> Disposable where O.E == S {
-            
-            return { factory in
-                source.map { elements -> [MKAnnotation] in
-                    elements.map(factory)
-                    }
-                    .bind(to: self.annotations)
+    public func annotations<
+        A: MKAnnotation,
+        O: ObservableType>
+        (_ source: O)
+        -> Disposable
+        where O.E == [A] {
+            return self.annotations(dataSource: RxMapViewReactiveDataSource())(source)
+    }
+    
+    public func annotations<
+        DataSource: RxMapViewDataSourceType,
+        O: ObservableType>
+        (dataSource: DataSource)
+        -> (_ source: O)
+        -> Disposable
+        where O.E == [DataSource.Element],
+        DataSource.Element: MKAnnotation {
+            return { source in
+                return source
+                    .subscribe({ event in
+                        dataSource.mapView(self.base, observedEvent: event)
+                    })
             }
     }
-    
-    public func annotations<O: ObservableType> (_ source: O)
-        -> Disposable where O.E == [MKAnnotation] {
-            let shared = source.share()
-            return Observable
-                .zip(shared.startWith([]), shared) { ($0, $1) }
-                .subscribe(AnyObserver { event in
-                    if case let .next(element) = event {
-                        let diff = self.diff(a: element.0, b: element.1)
-                        print("diff: \(diff)")
-                        self.base.removeAnnotations(diff.removedItems)
-                        self.base.addAnnotations(diff.newItems)
-                    }
-                })
-    }
-    
-    struct DiffResult {
-        let removedItems: [MKAnnotation]
-        let newItems: [MKAnnotation]
-    }
-    
-//    struct BoxedAnnotation {
-//        let boxed: MKAnnotation
-//    }
-    
-    func diff(a: [MKAnnotation], b: [MKAnnotation]) -> DiffResult {
-        
-        // TODO: Could be improved in performance.
-        var remainingItems = Array(b) //Set<BoxedAnnotation>(b.map(BoxedAnnotation))
-        var existingItems = [MKAnnotation]()
-        var removedItems = [MKAnnotation]()
-        
-        // Check the existing ones first.
-        for item in a {
-            if let index = remainingItems.index(where: item.isSame(as:)) {
-                // The item exists still.
-                remainingItems.remove(at: index)
-                existingItems.append(item)
-            } else {
-                // The item doesn't exist, remove it.
-                removedItems.append(item)
-            }
-        }
-        
-        // Remaining visible indices should be new.
-        let newItems = remainingItems
-        
-        return DiffResult(removedItems: removedItems, newItems: newItems)
-    }
-    
-    /*public func annotations<O: ObservableType> (_ source: O)
-        -> Disposable where O.E: MKAnnotation {
-            let shared = source.share()
-            return Observable
-                .zip(shared.startWith(null), shared) { ($0, $1) }
-                .subscribe(AnyObserver { event in
-                    if case let .next(element) = event {
-                        self.base.removeAnnotation(element.0)
-                        self.base.addAnnotation(element.1)
-                    }
-                })
-    }*/
 }
-
-extension MKAnnotation {
-    func isSame(as another: MKAnnotation) -> Bool {
-        return another.coordinate.latitude == self.coordinate.latitude
-            && another.coordinate.longitude == self.coordinate.longitude
-    }
-}
-
